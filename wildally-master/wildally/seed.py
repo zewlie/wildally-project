@@ -1,8 +1,9 @@
 """Some sample data to use while building out Wildally"""
 
 
-from model import User, Org, Hour, AnimalType, Website, Pickup
+from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site
 
+import csv
 from datetime import datetime
 from model import connect_to_db, db
 from server import app
@@ -18,24 +19,28 @@ def load_users():
     User.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.user"):
-        row = row.rstrip()
-        user_id, email, username, password = row.split("|")[:4]
+    with open('seed_data/user.csv', 'rU') as users:
+        users = csv.reader(users, dialect=csv.excel_tab)
+        next(users)
+        for row in users:
+
+            row = row[0].rstrip()
+            user_id, email, username, password = row.split(",")[:4]
 
         # email = user_data[0]
         # username = user_data[1]
         # password = user_data[2]
 
-        account_made = datetime.now()
+            account_made = datetime.now()
 
-        user = User(id=user_id,
-                    email=email,
-                    username=username,
-                    password=password,
-                    account_made=account_made)
+            user = User(id=user_id,
+                        email=email,
+                        username=username,
+                        password=password,
+                        account_made=account_made)
 
-        # We need to add to the session or it won't ever be stored
-        db.session.add(user)
+            # We need to add to the session or it won't ever be stored
+            db.session.add(user)
 
     # Once we're done, we should commit our work
     db.session.commit()
@@ -51,38 +56,45 @@ def load_orgs():
     Org.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.user"):
-        row = row.rstrip()
-        data = row.split("|")
-        user_id = data[0]
+    with open('seed_data/user.csv', 'rU') as users:
+        users = csv.reader(users, dialect=csv.excel_tab)
+        next(users)
+        for row in users:
 
-        name = data[4]
-        ein = data[5]
-        address1 = data[6]
-        address2 = data[7]
-        city = data[8]
-        state = data[9]
-        zipcode = data[10]
-        description = data[11]
-        phone = data[12]
-        email = data[13]
-        website = data[14]
+            row = row[0].rstrip()
+            data = row.split(",")
 
-        org = Org(user_id=user_id,
-                    name=name,
-                    ein=ein,
-                    address1=address1,
-                    address2=address2,
-                    city=city,
-                    state=state,
-                    zipcode=zipcode,
-                    description=description,
-                    phone=phone,
-                    email=email,
-                    website=website)
+            user_id = data[0]
 
-        # We need to add to the session or it won't ever be stored
-        db.session.add(org)
+            name = data[4]
+            ein = data[5]
+            show_address = data[6]
+            address1 = data[7]
+            address2 = data[8]
+            city = data[9]
+            state = data[10]
+            zipcode = data[11]
+            desc = data[12]
+            phone = data[13]
+            email = data[14]
+            website = data[15]
+
+            org = Org(user_id=user_id,
+                        name=name,
+                        ein=ein,
+                        show_address=show_address, 
+                        address1=address1,
+                        address2=address2,
+                        city=city,
+                        state=state,
+                        zipcode=zipcode,
+                        desc=desc,
+                        phone=phone,
+                        email=email,
+                        website=website)
+
+            # We need to add to the session or it won't ever be stored
+            db.session.add(org)
 
     # Once we're done, we should commit our work
     db.session.commit()

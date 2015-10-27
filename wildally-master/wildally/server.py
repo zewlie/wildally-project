@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, Markup, render_template, redirect, request, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import User, Org, Hour, AnimalType, Website, Pickup, connect_to_db, db
+from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
 
 
 app = Flask(__name__)

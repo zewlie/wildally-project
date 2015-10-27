@@ -37,6 +37,7 @@ class Org(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     name = db.Column(db.String(100), nullable=False)
     ein = db.Column(db.String(9))
+    show_address = db.Column(db.Boolean, nullable=False)
     address1 = db.Column(db.String(100))
     address2 = db.Column(db.String(100))
     city = db.Column(db.String(50), nullable=False)
@@ -105,7 +106,7 @@ class Animal(db.Model):
 
 
 # Contact type class
-class ContactType(db.model):
+class ContactType(db.Model):
     """ """
 
     __tablename__ = "contact_types"
@@ -114,31 +115,31 @@ class ContactType(db.model):
 
 
 # (org) Phone class
-class Phone(db.model):
+class Phone(db.Model):
     """ """
 
     __tablename__ = "phones"
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
-    type_id = db.Column(db.String(50), db.ForeignKey('org_contacts.id'), nullable=False)
+    type_id = db.Column(db.String(50), db.ForeignKey('contact_types.id'), nullable=False)
     number = db.Column(db.String(20), nullable=False)
 
 
 # (org) Email class
-class Email(db.model):
+class Email(db.Model):
     """ """
 
     __tablename__ = "emails"
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
-    type_id = db.Column(db.String(50), db.ForeignKey('org_contacts.id'), nullable=False)
+    type_id = db.Column(db.String(50), db.ForeignKey('contact_types.id'), nullable=False)
     email = db.Column(db.String(50), nullable=False)
 
 
 # (org) Social media class
-class SiteType(db.model):
+class SiteType(db.Model):
     """ """
 
     __tablename__ = "site_types"
@@ -147,7 +148,7 @@ class SiteType(db.model):
 
 
 # (org) Social media class
-class Site(db.model):
+class Site(db.Model):
     """ """
 
     __tablename__ = "sites"
@@ -156,7 +157,7 @@ class Site(db.model):
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
     type_id = db.Column(db.String(50), db.ForeignKey('site_types.id'), nullable=False)
     username = db.Column(db.String(50))
-    url = db.Column(db.string(200))
+    url = db.Column(db.String(200))
 
 
 
