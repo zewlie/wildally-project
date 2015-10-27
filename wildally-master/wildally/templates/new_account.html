@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Register for WildAlly
+{% endblock %}
+
+  {% block content %} 
+  <form action='/login-success' method="POST">
+
+    <label for='email'>Username: 
+        <input type='text' name='username'>
+    </label><br />
+
+    <label for='email'>Email: 
+        <input type='text' name='email'>
+    </label><br />
+
+    <label for='password'>Password:     
+        <input type='password' name='password'>
+    </label><br />
+
+    <!-- Optional inputs for wildlife orgs (special users). -->
+
+    <label for='is-org'>Are you signing up as a wildlife rehabilitator?
+        <input type='checkbox' name='is-org' value='yes'> Yes
+    </label><br />
+
+    <label for='org-name' hidden>Organization name: 
+        <input type='text' name='org-name'>
+    </label><br />
+
+    <label for='ein' hidden>EIN: 
+        <input type='text' name='ein'>
+    </label><br />
+
+    <label for='address1' hidden>Address Line 1: 
+        <input type='text' name='address'>
+    </label><br />
+
+    <label for='address2' hidden>Address Line 2:
+        <input type='text' name='address2'>
+    </label><br />
+
+    <label for='city' hidden>City: 
+        <input type='text' name='city'>
+    </label><br />
+
+    <label for='state' hidden>State: 
+        <input type='text' name='state'>
+    </label><br />
+
+    <label for='zipcode' hidden>Zipcode: 
+        <input type='text' name='zipcode'>
+    </label><br />
+
+    <label for='description' hidden>Description: 
+        <input type='text' name='description'>
+    </label><br />
+
+    <label for='phone' hidden>Organization phone: 
+        <input type='text' name='phone'>
+    </label><br />
+
+    <label for='org-email' hidden>Organization email:
+        <input type='text' name='org-email'>
+    </label><br />
+
+        <input type='submit' value='Create account!'>
+  </form>
+
+  <script></script>
+  {% endblock %}

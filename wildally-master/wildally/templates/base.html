@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <title>{% block title %} Title {% endblock %}</title>
+  <script href="https://code.jquery.com/jquery-2.1.4.js"></script>
+</head>
+
+<body>
+
+<!-- If session['email'] exists, show logout link,
+    if session['email'] does not exist, show login link -->
+
+{% if session['email'] %}
+    <a href="/logout">Logout</a>
+{% else %}
+    <a href="/login">Login</a>
+{% endif %}
+
+  <hr>
+
+  {% for message in get_flashed_messages() %}
+    <li>{{ message }}</li>
+  {% endfor %} 
+
+  {% block content %} Content {% endblock %}
+
+</body>
+</html>
