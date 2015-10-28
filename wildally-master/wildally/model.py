@@ -65,6 +65,11 @@ class Pickup(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     radius = db.Column(db.Float)
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Pickup org_id={} latitude={} longitude={} radius={}>".format(self.org_id, self.latitude, self.longitude, self.radius)
     
 
 # Hours (open hours for organizations) class
@@ -104,6 +109,11 @@ class Animal(db.Model):
     name = db.Column(db.String(100), nullable=False)
     desc = db.Column(db.String(300))
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Animal id={} name={} desc={}>".format(self.id, self.name, self.desc)
+
 
 # Contact type class
 class ContactType(db.Model):
@@ -113,6 +123,10 @@ class ContactType(db.Model):
 
     id = db.Column(db.String(50), nullable=False, primary_key=True)
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<ContactType id={}>".format(self.id)
 
 # (org) Phone class
 class Phone(db.Model):
@@ -146,6 +160,10 @@ class SiteType(db.Model):
 
     id = db.Column(db.String(50), nullable=False, primary_key=True)
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<SiteType id={}>".format(self.id)
 
 # (org) Social media class
 class Site(db.Model):

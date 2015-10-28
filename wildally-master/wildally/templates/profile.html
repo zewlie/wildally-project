@@ -4,10 +4,6 @@
 {% endblock %}
 
   {% block content %} 
-
-  {% if session['email'] %}
-    You've already got an account!
-  {% else %}
   <form action='/user-added' method="POST">
 
     <label for='email'>Username: 
@@ -22,58 +18,52 @@
         <input type='password' name='password'>
     </label><br />
 
-    <!-- Optional inputs for wildlife orgs (special users). -->
-
-    <label for='is-org'>Are you signing up as a wildlife rehabilitator?
-        <input type='checkbox' id='org-checkbox' name='is-org' value='yes'> Yes
-    </label><br />
-
-    <label for='org-name' class='org-field' hidden>Organization name: 
+    <label for='org-name' class='org-field'>Organization name: 
         <input type='text' name='org-name'>
     </label><br />
 
-    <label for='ein' class='org-field' hidden>EIN: 
+    <label for='ein' class='org-field'>EIN: 
         <input type='text' name='ein'>
     </label><br />
 
-    <label for='is-org' class='org-field' hidden>Do you want your full address to show in search results?
+    <label for='is-org' class='org-field'>Do you want your full address to show in search results?
         <input type='checkbox' name='show-address' value='1'> Yes
         <input type='checkbox' name='show-address' value='0' checked='checked'> No, show only my city
     </label><br />
 
-    <label for='address1' class='org-field' hidden>Address Line 1: 
+    <label for='address1' class='org-field'>Address Line 1: 
         <input type='text' name='address1'>
     </label><br />
 
-    <label for='address2' class='org-field' hidden>Address Line 2:
+    <label for='address2' class='org-field'>Address Line 2:
         <input type='text' name='address2'>
     </label><br />
 
-    <label for='city' class='org-field' hidden>City: 
+    <label for='city' class='org-field'>City: 
         <input type='text' name='city'>
     </label><br />
 
-    <label for='state' class='org-field' hidden>State: 
+    <label for='state' class='org-field'>State: 
         <input type='text' name='state'>
     </label><br />
 
-    <label for='zipcode' class='org-field' hidden>Zipcode: 
+    <label for='zipcode' class='org-field'>Zipcode: 
         <input type='text' name='zipcode'>
     </label><br />
 
-    <label for='desc' class='org-field' hidden>Description: 
+    <label for='desc' class='org-field'>Description: 
         <input type='text' name='desc'>
     </label><br />
 
-    <label for='phone' class='org-field' hidden>Organization phone: 
+    <label for='phone' class='org-field'>Organization phone: 
         <input type='text' name='phone'>
     </label><br />
 
-    <label for='org-email' class='org-field' hidden>Organization email:
+    <label for='org-email' class='org-field'>Organization email:
         <input type='text' name='org-email'>
     </label><br />
 
-    <label for='org-email' class='org-field' hidden>Organization website:
+    <label for='org-email' class='org-field'>Organization website:
         <input type='text' name='website'>
     </label><br />
 
@@ -95,6 +85,4 @@
   orgCheckbox.addEventListener('change', toggleOrgFields);
 
   </script>
-
-  {% endif %}
   {% endblock %}

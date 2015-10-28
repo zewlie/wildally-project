@@ -4,80 +4,75 @@
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site
 
 import csv
+from pygeocoder import Geocoder
 from datetime import datetime
 from model import connect_to_db, db
 from server import app
 
+user_csv_path = 'seed_data/user.csv'
+animal_path = 'seed_data/u.animal'
+contact_type_path = 'seed_data/u.contact_type'
+site_type_path = 'seed_data/u.site_type'
+
+
+def csv_to_tuples(file):
+    """ Read the csv file and return a list of rows as tuples.
+    This function assumes the csv file will start with a header. """
+
+    list_of_tuples = []
+
+    with open(file, 'rU') as users:
+        users = csv.reader(users, dialect=csv.excel_tab)
+        # Skip the header
+        next(users)
+
+        for row in users:
+            row = row[0].rstrip()
+            row = tuple(row.split(","))
+            list_of_tuples.append(row)
+
+    return list_of_tuples
+
 
 def load_users():
-    """Load users from u.user into database."""
+    """Load users from user.csv into database."""
 
     print "Users"
-
-    # Delete all rows in table, so if we need to run this a second time,
-    # we won't be trying to add duplicate users
     User.query.delete()
 
-    # Read u.user file and insert data
-    with open('seed_data/user.csv', 'rU') as users:
-        users = csv.reader(users, dialect=csv.excel_tab)
-        next(users)
-        for row in users:
+    data = csv_to_tuples(user_csv_path)
 
-            row = row[0].rstrip()
-            user_id, email, username, password = row.split(",")[:4]
+    for row in data:
+        user_id, email, username, password = row[:4]
+        account_made = datetime.now()
 
-        # email = user_data[0]
-        # username = user_data[1]
-        # password = user_data[2]
+        user = User(id=user_id,
+                    email=email,
+                    username=username,
+                    password=password,
+                    account_made=account_made)
 
-            account_made = datetime.now()
+        # We need to add to the session or it won't ever be stored
+        db.session.add(user)
 
-            user = User(id=user_id,
-                        email=email,
-                        username=username,
-                        password=password,
-                        account_made=account_made)
-
-            # We need to add to the session or it won't ever be stored
-            db.session.add(user)
-
-    # Once we're done, we should commit our work
+# Once we're done, we should commit our work
     db.session.commit()
 
 
 def load_orgs():
-    """Load wildlife orgs from u.user into database."""
+    """ Load wildlife orgs from user.csv into database. """
 
     print "Orgs"
-
-    # Delete all rows in table, so if we need to run this a second time,
-    # we won't be trying to add duplicate users
     Org.query.delete()
 
     # Read u.user file and insert data
-    with open('seed_data/user.csv', 'rU') as users:
-        users = csv.reader(users, dialect=csv.excel_tab)
-        next(users)
-        for row in users:
+    data = csv_to_tuples(user_csv_path)
 
-            row = row[0].rstrip()
-            data = row.split(",")
+    for row in data:
 
-            user_id = data[0]
+            user_id = row[0]
 
-            name = data[4]
-            ein = data[5]
-            show_address = data[6]
-            address1 = data[7]
-            address2 = data[8]
-            city = data[9]
-            state = data[10]
-            zipcode = data[11]
-            desc = data[12]
-            phone = data[13]
-            email = data[14]
-            website = data[15]
+            name, ein, show_address, address1, address2, city, state, zipcode, desc, phone, email, website = row[4:16]
 
             org = Org(user_id=user_id,
                         name=name,
@@ -101,9 +96,40 @@ def load_orgs():
 
 
 def load_pickups():
-    """Load org pickups from u.pickup into database."""
+    """ Convert addresses from user csv into coordinates; load into database. """
 
     print "Pickups"
+    Pickup.query.delete()
+
+    data = csv_to_tuples(user_csv_path)
+
+    for row in data:
+        org_id = row[0]
+        show_address = row[6]
+
+        # Only grab the address lines from users who want their addresses shown.
+        # For everyone else, grab only city, state, and zipcode.
+        # This ensures the privacy of users who want their addresses hidden.
+        if show_address == '1':
+            address = row[7:12]
+        else:
+            address = row[9:12]
+
+        address = " ".join(address)
+
+        lookup = Geocoder.geocode(address)
+        coords = lookup[0].coordinates
+
+        pickup = Pickup(org_id=org_id,
+                        latitude=coords[0],
+                        longitude=coords[1])
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(pickup)
+
+# Once we're done, we should commit our work
+    db.session.commit()
+
 
 
 def load_hours():
@@ -113,7 +139,7 @@ def load_hours():
 
 
 def load_org_animals():
-    """Load org animal types from u.org_animal into association table in database."""
+    """Load org animal typeseed_data/u.user" from u.org_animal into association table in database."""
 
     print "OrgAnimals"
 
@@ -122,12 +148,32 @@ def load_animals():
     """Load animal types from u.animal into database."""
 
     print "Animals"
+    Animal.query.delete()
+
+    for row in open(animal_path):
+        name = row.rstrip()
+
+        animal = Animal(name=name)
+
+        db.session.add(animal)
+
+    db.session.commit()
 
 
 def load_contact_types():
     """Load contact types from u.contact_type into database."""
 
     print "ContactTypes"
+    ContactType.query.delete()
+
+    for row in open(contact_type_path):
+        id = row.rstrip()
+
+        contact_type = ContactType(id=id)
+
+        db.session.add(contact_type)
+
+    db.session.commit()
 
 
 def load_phones():
@@ -146,6 +192,16 @@ def load_site_types():
     """Load org site types from u.site_type into database."""
 
     print "SiteTypes"
+    SiteType.query.delete()
+
+    for row in open(site_type_path):
+        id = row.rstrip()
+
+        site_type = SiteType(id=id)
+
+        db.session.add(site_type)
+
+    db.session.commit()
 
 
 def load_sites():
