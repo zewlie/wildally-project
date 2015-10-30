@@ -11,70 +11,122 @@
   <form action='/user-added' method="POST">
 
     <label for='email'>Username: 
-        <input type='text' name='username'>
+        <input type='text' name='username'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='email'>Email: 
-        <input type='text' name='email'>
+        <input type='text' name='email'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='password'>Password:     
-        <input type='password' name='password'>
+        <input type='password' name='password'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <!-- Optional inputs for wildlife orgs (special users). -->
 
-    <label for='is-org'>Are you signing up as a wildlife rehabilitator?
+    <label for='is-org'>Are you signing up as a wildlife rehabilitator? <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
         <input type='checkbox' id='org-checkbox' name='is-org' value='yes'> Yes
     </label><br />
 
     <label for='org-name' class='org-field' hidden>Organization name: 
-        <input type='text' name='org-name'>
+        <input type='text' name='org-name'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='ein' class='org-field' hidden>EIN: 
-        <input type='text' name='ein'>
+        <input type='text' name='ein'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='is-org' class='org-field' hidden>Do you want your full address to show in search results?
-        <input type='checkbox' name='show-address' value='1'> Yes
-        <input type='checkbox' name='show-address' value='0' checked='checked'> No, show only my city
+    <label for='is-org' class='org-field' hidden>Do you want your full address to show in search results? <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
+        <input type='radio' name='show-address' value='1'> Yes
+        <input type='radio' name='show-address' value='0' checked='checked'> No, show only my city
     </label><br />
 
     <label for='address1' class='org-field' hidden>Address Line 1: 
-        <input type='text' name='address1'>
+        <input type='text' name='address1'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='address2' class='org-field' hidden>Address Line 2:
-        <input type='text' name='address2'>
+        <input type='text' name='address2'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='city' class='org-field' hidden>City: 
-        <input type='text' name='city'>
+        <input type='text' name='city'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='state' class='org-field' hidden>State: 
-        <input type='text' name='state'>
+    <label for='state' class='org-field' hidden>State: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
+        <select name='state'>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">District Of Columbia</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+</select>
     </label><br />
 
     <label for='zipcode' class='org-field' hidden>Zipcode: 
-        <input type='text' name='zipcode'>
+        <input type='text' name='zipcode'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='desc' class='org-field' hidden>Description: 
-        <input type='text' name='desc'>
+        <input type='text' name='desc'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='phone' class='org-field' hidden>Organization phone: 
-        <input type='text' name='phone'>
+        <input type='text' name='phone'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='org-email' class='org-field' hidden>Organization email:
-        <input type='text' name='org-email'>
+        <input type='text' name='org-email'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
     <label for='org-email' class='org-field' hidden>Organization website:
-        <input type='text' name='website'>
+        <input type='text' name='website'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
         <input type='submit' value='Create account!'>

@@ -16,8 +16,8 @@ class User(db.Model):
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     account_made = db.Column(db.DateTime, nullable=False)
     last_login = db.Column(db.DateTime)
 
@@ -48,6 +48,9 @@ class Org(db.Model):
     email = db.Column(db.String(100))
     website = db.Column(db.String(100))
 
+    user = db.relationship("User",
+                            backref=db.backref("orgs"))
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -65,6 +68,9 @@ class Pickup(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     radius = db.Column(db.Float)
+
+    org = db.relationship("Org",
+                            backref=db.backref("pickups"))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -86,6 +92,9 @@ class Hour(db.Model):
     end_hour = db.Column(db.Float, nullable=True)
     closed = db.Column(db.Boolean, default=False)
 
+    org = db.relationship("Org",
+                            backref=db.backref("hours"))
+
 
 # Org <-> animals association class
 class OrgAnimal(db.Model):
@@ -97,6 +106,12 @@ class OrgAnimal(db.Model):
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
     type_id = db.Column(db.Integer, db.ForeignKey('animals.id'), nullable=False)
     priority = db.Column(db.Integer)
+
+    org = db.relationship("Org",
+                            backref=db.backref("org_animals"))
+
+    animal = db.relationship("Animal",
+                            backref=db.backref("org_animals"))
 
 
 # Animal type class
@@ -139,6 +154,12 @@ class Phone(db.Model):
     type_id = db.Column(db.String(50), db.ForeignKey('contact_types.id'), nullable=False)
     number = db.Column(db.String(20), nullable=False)
 
+    org = db.relationship("Org",
+                            backref=db.backref("phones"))
+
+    contact_type = db.relationship("ContactType",
+                            backref=db.backref("phones"))
+
 
 # (org) Email class
 class Email(db.Model):
@@ -150,6 +171,12 @@ class Email(db.Model):
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
     type_id = db.Column(db.String(50), db.ForeignKey('contact_types.id'), nullable=False)
     email = db.Column(db.String(50), nullable=False)
+
+    org = db.relationship("Org",
+                            backref=db.backref("emails"))
+
+    contact_type = db.relationship("ContactType",
+                            backref=db.backref("emails"))
 
 
 # (org) Social media class
@@ -176,6 +203,12 @@ class Site(db.Model):
     type_id = db.Column(db.String(50), db.ForeignKey('site_types.id'), nullable=False)
     username = db.Column(db.String(50))
     url = db.Column(db.String(200))
+
+    org = db.relationship("Org",
+                            backref=db.backref("sites"))
+
+    site_type = db.relationship("SiteType",
+                            backref=db.backref("sites"))
 
 
 

@@ -2,12 +2,14 @@
 
 from jinja2 import StrictUndefined
 
-from flask import Flask, Markup, render_template, redirect, request, flash, session
+from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
+from passlib.hash import pbkdf2_sha256
 from pygeocoder import Geocoder
 from datetime import datetime
 
+import secrets
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
 
 
@@ -20,15 +22,27 @@ app.secret_key = "ABC"
 # This is horrible. Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
 
+# Functions not associated with particular routes
+#################################################################################
+
+def make_geocode(address_list):
+    """ Generate geocode from a list of address attributes, e.g. [street, city, state]. """
+    
+    address = " ".join(address_list)
+    lookup = Geocoder.geocode(address)
+    coords = lookup[0].coordinates
+    return coords
+
+
+#################################################################################
+
 
 @app.route('/')
 def index():
     """Homepage."""
 
-    if 'email' not in session:
-        session['email'] = None
-    if 'password' not in session:
-        session['password'] = None
+    if 'username' not in session:
+        session['username'] = None
 
     return render_template('index.html')
 
@@ -43,24 +57,29 @@ def login():
 def login_success():
     """Login form submission."""
 
-    session['email'] = request.form.get("email")
-    session['password'] = request.form.get("password")
+    username = request.form.get("username")
+    password = request.form.get("password")
+    user = db.session.query(User).filter(User.username == username).first()
+    hash = user.password
 
-    user = db.session.query(User).filter(User.email == session['email']).first()
+    passcheck = pbkdf2_sha256.verify(password, hash)
 
-    if user is None or user.password != session['password']:
+    if user is None or passcheck == False:
         if user:
             flash("Whoops, did you forget your password?")
         else:
-            flash(Markup("That email doesn't appeared to be registered. <a href='/new'>Register now</a>?"))
+            flash(Markup("That username doesn't appeared to be registered. <a href='/new'>Register now</a>?"))
 
-        session['email'] = None
-        session['password'] = None
+        session['username'] = None
 
         return redirect('/login')
 
-    elif user.email == session['email'] and user.password == session['password']:
+    elif user.username == username and passcheck == True:
         flash("Welcome back, {}!".format(user.username))
+
+        session['username'] = username
+        user.last_login = datetime.now()
+        db.session.commit()
 
     #### TODO: redirect to previous page
     return redirect('/') # redirect to homepage
@@ -70,8 +89,7 @@ def login_success():
 def logout():
     """Logout and redirect to homepage."""
 
-    session['email'] = None
-    session['password'] = None
+    session['username'] = None
 
     flash("Successfully logged out!")
 
@@ -87,17 +105,17 @@ def create_user():
 def user_added():
     """Login form submission."""
 
-
     # Basic user fields:
     username = request.form.get("username")
     email = request.form.get("email")
     password = request.form.get("password")
+    hash = pbkdf2_sha256.encrypt(password, rounds=1111, salt_size=16)
 
     account_made = datetime.now()
 
     user = User(email=email,
                 username=username,
-                password=password,
+                password=hash,
                 account_made=account_made)
 
     db.session.add(user)
@@ -152,10 +170,7 @@ def user_added():
         else:
             address = [city, state, zipcode]
 
-        address = " ".join(address)
-
-        lookup = Geocoder.geocode(address)
-        coords = lookup[0].coordinates
+        coords = make_geocode(address)
 
         pickup = Pickup(org_id=org_id,
                         latitude=coords[0],
@@ -165,8 +180,7 @@ def user_added():
         db.session.commit()
 
      # Automatically log the new user in
-    session['email'] = email
-    session['password'] = password
+    session['username'] = username
 
     flash("Welcome to WildAlly, {}!".format(username))
 
@@ -178,6 +192,30 @@ def manage_account():
     """Manage user account."""
 
     return render_template('settings.html')
+
+
+@app.route('/orgs.json')
+def org_info():
+    """JSON information about bears."""
+
+    orgs = {
+        org.id: {
+            "orgName": org.name,
+            "address1" : org.address1,
+            "address2" : org.address2,
+            "city": org.city,
+            "state": org.state,
+            "zipcode": org.zipcode,
+            "desc": org.desc,
+            "phone": org.phone,
+            "email": org.email,
+            "website": org.website,
+            "latitude": org.pickups[0].latitude,
+            "longitude": org.pickups[0].longitude
+        } for org in Org.query.all()}
+
+    return jsonify(orgs)
+
 
 
 

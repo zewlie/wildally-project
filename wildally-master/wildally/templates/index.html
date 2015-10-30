@@ -4,5 +4,14 @@
 {% endblock %}
 
   {% block content %} 
-    <p>This is the homepage!</p>
+     <div id="main-map"></div>
+
+
+    <!-- The async attribute lets the browser render everything else while the Maps API loads. When the API is ready, it will call the function using 'callback' -->
+
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeE_DvLcPVIOjHQu7Mvsi6b5SFgWXkhAs&callback=initMap">
+    </script>
+    <script src="/static/map.js"></script>
+
   {% endblock %}
