@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Register for WildAlly
+{% endblock %}
+
+  {% block content %} 
+  <form action='/user-added' method="POST">
+
+    <label for='email'>Username: 
+        <input type='text' name='username'>
+    </label><br />
+
+    <label for='email'>Email: 
+        <input type='text' name='email'>
+    </label><br />
+
+    <label for='password'>Password:     
+        <input type='password' name='password'>
+    </label><br />
+
+    <label for='org-name' class='org-field'>Organization name: 
+        <input type='text' name='org-name'>
+    </label><br />
+
+    <label for='ein' class='org-field'>EIN: 
+        <input type='text' name='ein'>
+    </label><br />
+
+    <label for='is-org' class='org-field'>Do you want your full address to show in search results?
+        <input type='checkbox' name='show-address' value='1'> Yes
+        <input type='checkbox' name='show-address' value='0' checked='checked'> No, show only my city
+    </label><br />
+
+    <label for='address1' class='org-field'>Address Line 1: 
+        <input type='text' name='address1'>
+    </label><br />
+
+    <label for='address2' class='org-field'>Address Line 2:
+        <input type='text' name='address2'>
+    </label><br />
+
+    <label for='city' class='org-field'>City: 
+        <input type='text' name='city'>
+    </label><br />
+
+    <label for='state' class='org-field'>State: 
+        <input type='text' name='state'>
+    </label><br />
+
+    <label for='zipcode' class='org-field'>Zipcode: 
+        <input type='text' name='zipcode'>
+    </label><br />
+
+    <label for='desc' class='org-field'>Description: 
+        <input type='text' name='desc'>
+    </label><br />
+
+    <label for='phone' class='org-field'>Organization phone: 
+        <input type='text' name='phone'>
+    </label><br />
+
+    <label for='org-email' class='org-field'>Organization email:
+        <input type='text' name='org-email'>
+    </label><br />
+
+    <label for='org-email' class='org-field'>Organization website:
+        <input type='text' name='website'>
+    </label><br />
+
+        <input type='submit' value='Create account!'>
+  </form>
+
+  <script>
+
+  var orgCheckbox = document.getElementById("org-checkbox");
+
+  function toggleOrgFields(evt) {
+    if (orgCheckbox.checked) {
+            $("label.org-field").removeAttr("hidden")
+        } else {
+            $("label.org-field").attr("hidden", "true")
+        }
+    }
+
+  orgCheckbox.addEventListener('change', toggleOrgFields);
+
+  </script>
+  {% endblock %}
