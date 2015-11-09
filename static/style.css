@@ -79,3 +79,7 @@ body {
 
 
 #main-map { height: 960px; width: 100%; margin-top:-50px; }
+
+.temp-hidden {
+  display: none;
+}

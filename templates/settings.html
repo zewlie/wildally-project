@@ -1,78 +1,197 @@
 {% extends "base.html" %}
 
-{% block title %}Register for WildAlly
+{% block title %}Settings
 {% endblock %}
 
   {% block content %} 
 
-<h4>Account Settings</h4>
-    <label for='email'>Username: {{ username }} <span id="edit-username" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-        <input type='text' id='username' name='username' hidden>
+<h4>Account</h4>
+
+    <label for='username'>Username: <span id="current-username">{{ username }}</span>
+        <input type='text' id='username' name='username' class='click-to-save temp-hidden'>
+
+        <button type="button" id="button-username" class="temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-username" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
     </label><br />
 
-    <label for='email'>Email: {{ email }} <span id="edit-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-        <input type='text' id='email' name='email' hidden>
+    <label for='email'>Email: <span id="current-email">{{ email }}</span>
+        <input type='text' id='email' name='email' class='temp-hidden'>
+
+        <button type="button" id="button-email" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
     </label><br />
 
-    <label for='password'>Password: ******** <span id="edit-password" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>    
-        <input type='password' id='password' name='password' hidden>
+    <label for='password'>Password: <span id="current-password">********</span> 
+        <input type='password' id='password' name='password' class='temp-hidden'>
+
+        <button type="button" id="button-password" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-password" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
     </label><br />
 
 {% if is_org == 1 %}
-<h4>Organization Settings</h4>
+<h4>Organization</h4>
 
-    <label for='org-name' class='org-field'>Organization name: {{ org_name }} <span id="edit-org-name" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='org-name' name='org-name' hidden>
+    <label for='org-name' class='org-field'>Organization name: <span id="current-org-name">{{ org_name }}</span> 
+
+        <input type='text' id='org-name' name='org-name' class='temp-hidden'>
+
+         <button type="button" id="button-org-name" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-org-name" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
     </label><br />
 
-    <label for='ein' class='org-field'>EIN: {{ ein }} <span id="edit-ein" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='ein' name='ein' hidden>
+    <label for='ein' class='org-field'>EIN: <span id="current-ein">{{ ein }}</span>
+        <input type='text' id='ein' name='ein' class="temp-hidden">
+
+        <button type="button" id="button-ein" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-ein" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
     </label><br />
 
-    <label for='is-org' class='org-field'>Do you want your full address to show in search results?
+    <label for='desc' class='org-field'>Description: <span id="current-desc">{{ desc }}</span>
+        <input type='text' id='desc' name='desc' class='temp-hidden'>
+
+        <button type="button" id="button-desc" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+<h4>Location</h4>
+
+    <label for='address1' class='org-field'>Address Line 1: <span id="current-address1">{{ address1 }}</span>  
+        <input type='text' id='address1' name='address1' class='temp-hidden'>
+
+        <button type="button" id="button-address1" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-address1" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='address2' class='org-field'>Address Line 2: <span id="current-address2">{{ address2  }}</span>
+        <input type='text' id='address2' name='address2' class='temp-hidden'>
+
+        <button type="button" id="button-address2" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-address2" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='city' class='org-field'>City: <span id="current-city">{{ city }}</span>
+        <input type='text' id='city' name='city' class='temp-hidden'>
+
+        <button type="button" id="button-city" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-city" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='state' class='org-field'>State: <span id="current-state">{{ state }}</span>
+        <select name='state' id='state' class='temp-hidden'>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">District Of Columbia</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+    </select>
+
+        <button type="button" id="button-state" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-state" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='zipcode' class='org-field'>Zipcode: <span id="current-zipcode">{{ zipcode }}</span> 
+        <input type='text' id='zipcode' name='zipcode' class='temp-hidden'>
+
+        <button type="button" id="button-zipcode" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-zipcode" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+
+<h4>Contacts</h4>
+
+    <label for='phone' class='org-field'>Organization phone: <span id="current-phone">{{ phone }}</span>
+        <input type='text' id='phone' name='phone' class='temp-hidden'>
+
+        <button type="button" id="button-phone" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-phone" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ email }}</span>  
+        <input type='text' id='org-email' name='org-email' class='temp-hidden'>
+
+        <button type="button" id="button-org-email" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-org-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+    <label for='website' class='org-field'>Organization website: <span id="current-website">{{ website }}</span> 
+        <input type='text' id='website' name='website' class='temp-hidden'>
+
+        <button type="button" id="button-website" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
+        <span id="edit-website" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+    </label><br />
+
+<h4>Preferences</h4>
+
+    <label for='is-org' class='org-field'>Do you want your organization's full address to show in search results?<br />
         {% if show_address == 1 %}
         <input type='radio' name='show-address' value='1' checked='checked'> Yes
         <input type='radio' name='show-address' value='0'> No, show only my city
         {% else %}
         <input type='radio' name='show-address' value='1'> Yes
         <input type='radio' name='show-address' value='0' checked='checked'> No, show only my city
+
+        <button type="button" id="button-show-address" class="btn btn-success btn-xs">Save</button>
         {% endif %}
-    </label><br />
-
-    <label for='address1' class='org-field'>Address Line 1: {{ address1 }} <span id="edit-address1" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='address1' name='address1' hidden>
-    </label><br />
-
-    <label for='address2' class='org-field'>Address Line 2: {{ address2  }} <span id="edit-address2" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='address2' name='address2' hidden>
-    </label><br />
-
-    <label for='city' class='org-field'>City: {{ city }} <span id="edit-city" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='city' name='city' hidden>
-    </label><br />
-
-    <label for='state' class='org-field'>State: {{ state }} <span id="edit-state" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='state' name='state' hidden>
-    </label><br />
-
-    <label for='zipcode' class='org-field'>Zipcode: {{ zipcode }} <span id="edit-zipcode" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='zipcode' name='zipcode' hidden>
-    </label><br />
-
-    <label for='desc' class='org-field'>Description: {{ desc }} <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='desc' name='desc' hidden>
-    </label><br />
-
-    <label for='phone' class='org-field'>Organization phone: {{ phone }} <span id="edit-phone" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='phone' name='phone' hidden>
-    </label><br />
-
-    <label for='org-email' class='org-field'>Organization email: {{ email }} <span id="edit-org-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='org-email' name='org-email' hidden>
-    </label><br />
-
-    <label for='org-email' class='org-field'>Organization website: {{ website }} <span id="edit-website" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
-        <input type='text' id='website' name='website' hidden>
     </label><br />
 
     {% endif %}
