@@ -15,11 +15,11 @@
     </div>
      <ul class="nav navbar-nav navbar-right">
       {% if session['username'] %}
-          <li><a href="/logout">Logout</a></li>
-          <li><a href="#"><span class="glyphicon glyphicon-question-sign"></span></a></li>      {% else %}
+          <li><a href="/settings">Settings</a></li>
+          <li><a href="/logout">Logout</a></li>     
+      {% else %}
           <li><a href="/new">Register</a><li>
           <li><a href="/login">Login</a><li>
-          <li><a href="#"><span class="glyphicon glyphicon-question-sign"></span></a></li>
 {% endif %}
       </ul>
   </div>
@@ -85,6 +85,7 @@
 </div>
 </div>
 
+<script src="/static/other.js"></script>
 
 </body>
 </html>

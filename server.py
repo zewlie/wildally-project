@@ -5,6 +5,8 @@ from datetime import datetime
 
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
+from redis import Redis
+from celery import Celery
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
 
@@ -17,6 +19,9 @@ app.secret_key = "ABC"
 # Normally, if you use an undefined variable in Jinja2, it fails silently.
 # This is horrible. Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
+
+# Redis
+# redis = Redis()
 
 # Functions not associated with particular routes
 #################################################################################
@@ -173,7 +178,32 @@ def user_added():
 def manage_account():
     """Manage user account."""
 
-    return render_template('settings.html')
+    username = session['username']
+    user = db.session.query(User).filter(User.username == username).first()
+    org = db.session.query(Org).filter(Org.user_id == user.id).first()
+
+    if org:
+        is_org = 1
+    else:
+        is_org = 0
+
+    return render_template('settings.html', is_org=is_org, 
+                                            username=user.username, 
+                                            email=user.email,
+                                            org_name=org.name,
+                                            ein=org.ein,
+                                            show_address=org.show_address,
+                                            address1=org.address1,
+                                            address2=org.address2,
+                                            city=org.city,
+                                            state=org.state,
+                                            zipcode=org.zipcode,
+                                            desc=org.desc,
+                                            phone=org.phone,
+                                            org_email= org.email,
+                                            website=org.website,
+                                            accept_animals=org.accept_animals,
+                                            accept_volunteers=org.accept_volunteers)
 
 
 @app.route('/orgs.json')
@@ -209,16 +239,6 @@ def org_info():
     return jsonify(orgs)
 
 
-@app.route('/org-animals.json')
-def org_animals_info():
-    """JSON information about which orgs care for which animal types."""
-
-
-
-    return jsonify(org_animals)
-
-
-
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
@@ -227,7 +247,7 @@ if __name__ == "__main__":
 
     connect_to_db(app)
 
-    # Use the DebugToolbar
+    # # Use the DebugToolbar
     DebugToolbarExtension(app)
 
     app.run()

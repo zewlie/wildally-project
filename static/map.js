@@ -230,7 +230,7 @@ var markerArray = [];
       console.log(onlyShow["animals"]);
   }
 
-// Listen for changes to the filters
+// Listen for changes to the filters / address bar
     $('.map-filter-cb').on("click", updateFilters);
     $('#submit-address').on("click", updateMapCenter);
     autocomplete.addListener('place_changed', onPlaceChanged);

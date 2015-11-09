@@ -4,71 +4,80 @@
 {% endblock %}
 
   {% block content %} 
-  <form action='/user-added' method="POST">
 
-    <label for='email'>Username: 
-        <input type='text' name='username'>
+<h4>Account Settings</h4>
+    <label for='email'>Username: {{ username }} <span id="edit-username" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+        <input type='text' id='username' name='username' hidden>
     </label><br />
 
-    <label for='email'>Email: 
-        <input type='text' name='email'>
+    <label for='email'>Email: {{ email }} <span id="edit-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+        <input type='text' id='email' name='email' hidden>
     </label><br />
 
-    <label for='password'>Password:     
-        <input type='password' name='password'>
+    <label for='password'>Password: ******** <span id="edit-password" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>    
+        <input type='password' id='password' name='password' hidden>
     </label><br />
 
-    <label for='org-name' class='org-field'>Organization name: 
-        <input type='text' name='org-name'>
+{% if is_org == 1 %}
+<h4>Organization Settings</h4>
+
+    <label for='org-name' class='org-field'>Organization name: {{ org_name }} <span id="edit-org-name" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='org-name' name='org-name' hidden>
     </label><br />
 
-    <label for='ein' class='org-field'>EIN: 
-        <input type='text' name='ein'>
+    <label for='ein' class='org-field'>EIN: {{ ein }} <span id="edit-ein" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='ein' name='ein' hidden>
     </label><br />
 
     <label for='is-org' class='org-field'>Do you want your full address to show in search results?
-        <input type='checkbox' name='show-address' value='1'> Yes
-        <input type='checkbox' name='show-address' value='0' checked='checked'> No, show only my city
+        {% if show_address == 1 %}
+        <input type='radio' name='show-address' value='1' checked='checked'> Yes
+        <input type='radio' name='show-address' value='0'> No, show only my city
+        {% else %}
+        <input type='radio' name='show-address' value='1'> Yes
+        <input type='radio' name='show-address' value='0' checked='checked'> No, show only my city
+        {% endif %}
     </label><br />
 
-    <label for='address1' class='org-field'>Address Line 1: 
-        <input type='text' name='address1'>
+    <label for='address1' class='org-field'>Address Line 1: {{ address1 }} <span id="edit-address1" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='address1' name='address1' hidden>
     </label><br />
 
-    <label for='address2' class='org-field'>Address Line 2:
-        <input type='text' name='address2'>
+    <label for='address2' class='org-field'>Address Line 2: {{ address2  }} <span id="edit-address2" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='address2' name='address2' hidden>
     </label><br />
 
-    <label for='city' class='org-field'>City: 
-        <input type='text' name='city'>
+    <label for='city' class='org-field'>City: {{ city }} <span id="edit-city" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='city' name='city' hidden>
     </label><br />
 
-    <label for='state' class='org-field'>State: 
-        <input type='text' name='state'>
+    <label for='state' class='org-field'>State: {{ state }} <span id="edit-state" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='state' name='state' hidden>
     </label><br />
 
-    <label for='zipcode' class='org-field'>Zipcode: 
-        <input type='text' name='zipcode'>
+    <label for='zipcode' class='org-field'>Zipcode: {{ zipcode }} <span id="edit-zipcode" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='zipcode' name='zipcode' hidden>
     </label><br />
 
-    <label for='desc' class='org-field'>Description: 
-        <input type='text' name='desc'>
+    <label for='desc' class='org-field'>Description: {{ desc }} <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='desc' name='desc' hidden>
     </label><br />
 
-    <label for='phone' class='org-field'>Organization phone: 
-        <input type='text' name='phone'>
+    <label for='phone' class='org-field'>Organization phone: {{ phone }} <span id="edit-phone" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='phone' name='phone' hidden>
     </label><br />
 
-    <label for='org-email' class='org-field'>Organization email:
-        <input type='text' name='org-email'>
+    <label for='org-email' class='org-field'>Organization email: {{ email }} <span id="edit-org-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='org-email' name='org-email' hidden>
     </label><br />
 
-    <label for='org-email' class='org-field'>Organization website:
-        <input type='text' name='website'>
+    <label for='org-email' class='org-field'>Organization website: {{ website }} <span id="edit-website" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>  
+        <input type='text' id='website' name='website' hidden>
     </label><br />
 
-        <input type='submit' value='Create account!'>
-  </form>
+    {% endif %}
+
+
 
   <script>
 
