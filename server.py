@@ -205,6 +205,28 @@ def manage_account():
                                             accept_animals=org.accept_animals,
                                             accept_volunteers=org.accept_volunteers)
 
+@app.route('/_update-settings')
+def update_settings():
+
+    username = session['username']
+    setting_name = request.args.get("settingName")
+    setting_value = request.args.get("settingValue")
+
+    if setting_name == 'username':
+        user = db.session.query(User).filter(User.username == username).first()
+        user.username = setting_value
+        db.session.commit()
+        session['username'] = setting_value
+    else:
+        org = db.session.query(Org).filter(Org.user_id == user.id).first()
+
+    settings = {
+        'SettingName': setting_name,
+        'SettingValue': setting_value
+    }
+
+    return jsonify(settings)
+
 
 @app.route('/orgs.json')
 def org_info():

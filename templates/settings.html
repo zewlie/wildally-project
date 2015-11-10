@@ -8,27 +8,36 @@
 <h4>Account</h4>
 
     <label for='username'>Username: <span id="current-username">{{ username }}</span>
-        <input type='text' id='username' name='username' class='click-to-save temp-hidden'>
 
-        <button type="button" id="button-username" class="temp-hidden btn btn-success btn-xs">Save</button>
+        <input type='text' id='username' name='username' class='temp-hidden'>
+
+        <button type="button" id="button-username" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-username" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='username-success'></span>
     </label><br />
 
     <label for='email'>Email: <span id="current-email">{{ email }}</span>
+
         <input type='text' id='email' name='email' class='temp-hidden'>
 
         <button type="button" id="button-email" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='email-success'></span>
     </label><br />
 
-    <label for='password'>Password: <span id="current-password">********</span> 
+    <label for='password'>Password: <span id="current-password">********</span>
+
         <input type='password' id='password' name='password' class='temp-hidden'>
 
         <button type="button" id="button-password" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-password" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='password-success'></span>
     </label><br />
 
 {% if is_org == 1 %}
@@ -41,51 +50,69 @@
          <button type="button" id="button-org-name" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-org-name" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='org-name-success'></span>
     </label><br />
 
     <label for='ein' class='org-field'>EIN: <span id="current-ein">{{ ein }}</span>
+
         <input type='text' id='ein' name='ein' class="temp-hidden">
 
         <button type="button" id="button-ein" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-ein" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='ein-success'></span>
     </label><br />
 
     <label for='desc' class='org-field'>Description: <span id="current-desc">{{ desc }}</span>
+
         <input type='text' id='desc' name='desc' class='temp-hidden'>
 
         <button type="button" id="button-desc" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='desc-success'></span>
     </label><br />
 
 <h4>Location</h4>
 
-    <label for='address1' class='org-field'>Address Line 1: <span id="current-address1">{{ address1 }}</span>  
+    <label for='address1' class='org-field'>Address Line 1: <span id="current-address1">{{ address1 }}</span>
+
         <input type='text' id='address1' name='address1' class='temp-hidden'>
 
         <button type="button" id="button-address1" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-address1" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='address1-success'></span>
     </label><br />
 
     <label for='address2' class='org-field'>Address Line 2: <span id="current-address2">{{ address2  }}</span>
+
         <input type='text' id='address2' name='address2' class='temp-hidden'>
 
         <button type="button" id="button-address2" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-address2" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='address2-success'></span>
     </label><br />
 
     <label for='city' class='org-field'>City: <span id="current-city">{{ city }}</span>
+
         <input type='text' id='city' name='city' class='temp-hidden'>
 
         <button type="button" id="button-city" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-city" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='city-success'></span>
     </label><br />
 
     <label for='state' class='org-field'>State: <span id="current-state">{{ state }}</span>
+
         <select name='state' id='state' class='temp-hidden'>
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
@@ -143,41 +170,55 @@
         <button type="button" id="button-state" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-state" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='state-success'></span>
     </label><br />
 
-    <label for='zipcode' class='org-field'>Zipcode: <span id="current-zipcode">{{ zipcode }}</span> 
+    <label for='zipcode' class='org-field'>Zipcode: <span id="current-zipcode">{{ zipcode }}</span>
+
         <input type='text' id='zipcode' name='zipcode' class='temp-hidden'>
 
         <button type="button" id="button-zipcode" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-zipcode" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='zipcode-success'></span>
     </label><br />
 
 
 <h4>Contacts</h4>
 
     <label for='phone' class='org-field'>Organization phone: <span id="current-phone">{{ phone }}</span>
+
         <input type='text' id='phone' name='phone' class='temp-hidden'>
 
         <button type="button" id="button-phone" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-phone" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='phone-success'></span>
     </label><br />
 
-    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ email }}</span>  
+    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ email }}</span>
+
         <input type='text' id='org-email' name='org-email' class='temp-hidden'>
 
         <button type="button" id="button-org-email" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-org-email" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='org-email-success'></span>
     </label><br />
 
-    <label for='website' class='org-field'>Organization website: <span id="current-website">{{ website }}</span> 
+    <label for='website' class='org-field'>Organization website: <span id="current-website">{{ website }}</span>
+
         <input type='text' id='website' name='website' class='temp-hidden'>
 
         <button type="button" id="button-website" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
         <span id="edit-website" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='website-success'></span>
     </label><br />
 
 <h4>Preferences</h4>
