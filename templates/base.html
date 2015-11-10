@@ -14,7 +14,7 @@
       </a>
     </div>
      <ul class="nav navbar-nav navbar-right">
-      {% if session['username'] %}
+      {% if session['user_id'] %}
           <li><a href="/settings">Settings</a></li>
           <li><a href="/logout">Logout</a></li>     
       {% else %}

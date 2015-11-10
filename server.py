@@ -12,6 +12,11 @@ from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone
 
 
 app = Flask(__name__)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:5000'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:5000'
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
@@ -31,8 +36,8 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    if 'username' not in session:
-        session['username'] = None
+    if 'user_id' not in session:
+        session['user_id'] = None
 
     return render_template('index.html')
 
@@ -58,14 +63,14 @@ def login_success():
         else:
             flash(Markup("That username doesn't appeared to be registered. <a href='/new'>Register now</a>?"))
 
-        session['username'] = None
+        session['user_id'] = None
 
         return redirect('/login')
 
     elif user.username == username and passcheck is True:
         flash("Welcome back, {}!".format(user.username))
 
-        session['username'] = username
+        session['user_id'] = user.id
         user.last_login = datetime.now()
         db.session.commit()
 
@@ -77,7 +82,7 @@ def login_success():
 def logout():
     """Logout and redirect to homepage."""
 
-    session['username'] = None
+    session['user_id'] = None
 
     flash("Successfully logged out!")
 
@@ -167,7 +172,10 @@ def user_added():
         db.session.commit()
 
      # Automatically log the new user in
-    session['username'] = username
+
+    user = db.session.query(User).filter(User.email == email).one()
+
+    session['user_id'] = user.id
 
     flash("Welcome to WildAlly, {}!".format(username))
 
@@ -178,9 +186,9 @@ def user_added():
 def manage_account():
     """Manage user account."""
 
-    username = session['username']
-    user = db.session.query(User).filter(User.username == username).first()
-    org = db.session.query(Org).filter(Org.user_id == user.id).first()
+    user_id = session['user_id']
+    user = db.session.query(User).filter(User.id == user_id).first()
+    org = db.session.query(Org).filter(Org.user_id == user_id).first()
 
     if org:
         is_org = 1
@@ -208,24 +216,50 @@ def manage_account():
 @app.route('/_update-settings')
 def update_settings():
 
-    username = session['username']
+    attributes = {'user': ['username',
+                            'email',
+                            'password'],
+                'org': ['name',
+                        'ein',
+                        'show_address',
+                        'address1',
+                        'address2',
+                        'city',
+                        'state',
+                        'zipcode',
+                        'desc',
+                        'phone',
+                        'org-email',
+                        'website',
+                        'accept_animals',
+                        'accept_volunteers']
+                        }
+
+    user_id = session['user_id']
     setting_name = request.args.get("settingName")
     setting_value = request.args.get("settingValue")
 
-    if setting_name == 'username':
-        user = db.session.query(User).filter(User.username == username).first()
-        user.username = setting_value
+    if setting_name in attributes['user']:
+        user = db.session.query(User).filter(User.id == user_id).first()
+        setattr(user, setting_name, setting_value)
         db.session.commit()
-        session['username'] = setting_value
-    else:
-        org = db.session.query(Org).filter(Org.user_id == user.id).first()
 
-    settings = {
-        'SettingName': setting_name,
-        'SettingValue': setting_value
-    }
+        if setting_name == 'username':
+            session['username'] = setting_value
 
-    return jsonify(settings)
+        if getattr(user, setting_name) == setting_value:
+            return jsonify({'success': 'yes'})
+
+    elif setting_name in attributes['org']:
+        setting_name = setting_name.replace('org-','')
+        org = db.session.query(Org).filter(Org.user_id == user_id).first()
+        setattr(org, setting_name, setting_value)
+        db.session.commit()
+
+        if getattr(org, setting_name) == setting_value:
+            return jsonify({'success': 'yes'})
+
+    return jsonify({'success': 'no'})
 
 
 @app.route('/orgs.json')

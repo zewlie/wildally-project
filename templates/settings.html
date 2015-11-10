@@ -199,7 +199,7 @@
         <span id='phone-success'></span>
     </label><br />
 
-    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ email }}</span>
+    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ org_email }}</span>
 
         <input type='text' id='org-email' name='org-email' class='temp-hidden'>
 
@@ -225,33 +225,18 @@
 
     <label for='is-org' class='org-field'>Do you want your organization's full address to show in search results?<br />
         {% if show_address == 1 %}
-        <input type='radio' name='show-address' value='1' checked='checked'> Yes
-        <input type='radio' name='show-address' value='0'> No, show only my city
+        <input type='radio' name='show_address' value='1' checked='checked'> Yes
+        <input type='radio' name='show_address' value='0'> No, show only my city
         {% else %}
-        <input type='radio' name='show-address' value='1'> Yes
-        <input type='radio' name='show-address' value='0' checked='checked'> No, show only my city
+        <input type='radio' name='show_address' value='1'> Yes
+        <input type='radio' name='show_address' value='0' checked='checked'> No, show only my city
 
-        <button type="button" id="button-show-address" class="btn btn-success btn-xs">Save</button>
+        <button type="button" id="click-to-save-radio button-show_address" class="btn btn-success btn-xs">Save</button>
+
+        <span id='show_address-success'></span>
         {% endif %}
     </label><br />
 
     {% endif %}
 
-
-
-  <script>
-
-  var orgCheckbox = document.getElementById("org-checkbox");
-
-  function toggleOrgFields(evt) {
-    if (orgCheckbox.checked) {
-            $("label.org-field").removeAttr("hidden")
-        } else {
-            $("label.org-field").attr("hidden", "true")
-        }
-    }
-
-  orgCheckbox.addEventListener('change', toggleOrgFields);
-
-  </script>
   {% endblock %}
