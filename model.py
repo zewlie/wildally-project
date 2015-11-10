@@ -3,6 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from pygeocoder import Geocoder
 from passlib.hash import pbkdf2_sha256
+import time
 
 db = SQLAlchemy()
 
@@ -87,6 +88,8 @@ class Org(db.Model):
         address = " ".join(address)
         lookup = Geocoder.geocode(address)
         coords = lookup[0].coordinates
+
+        time.sleep(1)
         return coords
 
 # Pickup point/radius class

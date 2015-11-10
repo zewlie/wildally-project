@@ -8,7 +8,7 @@ from datetime import datetime
 from model import connect_to_db, db
 from server import app
 
-user_csv_path = 'seed_data/rehabilitators_wa.csv'
+user_csv_path = 'seed_data/rehabilitators.csv'
 org_animal_csv_path = 'seed_data/animal_org.csv'
 animal_path = 'seed_data/u.animal'
 contact_type_path = 'seed_data/u.contact_type'
