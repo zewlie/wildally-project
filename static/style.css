@@ -83,3 +83,8 @@ body {
 .temp-hidden {
   display: none;
 }
+
+.thumbnail {
+  width: 120px;
+  display: inline;
+}

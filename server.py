@@ -297,6 +297,7 @@ def uploaded_photo(filename):
 
 @app.route('/photos', methods=['GET', 'POST'])
 def manage_photos():
+    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
 
     def allowed_file(filename):
         return '.' in filename and \
@@ -306,14 +307,18 @@ def manage_photos():
         file = request.files['photo']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            if os.path.lexists(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img') == False:
-                os.makedirs(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img')
+            if os.path.lexists(photo_dir) == False:
+                os.makedirs(photo_dir)
 
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img', filename))
-            return redirect(url_for('uploaded_photo',
-                                    filename=filename))
+            file.save(os.path.join(photo_dir, filename))
+            # return redirect(url_for('uploaded_photo',
+            #                         filename=filename))
+            return redirect('/photos')
     else:
-        return render_template('photos.html')
+        for root, dirs, filenames in os.walk(photo_dir):
+            root = root
+            filenames = filenames
+        return render_template('photos.html', root=root, filenames=filenames)
 
 
 @app.route('/analytics')
