@@ -89,7 +89,7 @@ class Org(db.Model):
         lookup = Geocoder.geocode(address)
         coords = lookup[0].coordinates
 
-        time.sleep(1)
+        time.sleep(0.2)
         return coords
 
 # Pickup point/radius class

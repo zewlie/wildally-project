@@ -29,7 +29,8 @@
         <span id='email-success'></span>
     </label><br />
 
-    <label for='password'>Password: <span id="current-password">********</span>
+    <label for='password'>Password: <span id="current-password"></span>
+        <span id="password-mock">**********</span>
 
         <input type='password' id='password' name='password' class='temp-hidden'>
 
@@ -77,43 +78,37 @@
     </label><br />
 
 <h4>Location</h4>
+<label>Address 
 
-    <label for='address1' class='org-field'>Address Line 1: <span id="current-address1">{{ address1 }}</span>
+<span id="edit-address" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
 
-        <input type='text' id='address1' name='address1' class='temp-hidden'>
+<span id='address-success'></span><br />
 
-        <button type="button" id="button-address1" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+{% if address1 %}
+    <span id="current-address1" class="current-address">{{ address1 }}</span>
+{% else %}
+    <span id="current-address1" class="current-address"></span>
+    <span class="current-address">------</span>
+{% endif %}
 
-        <span id="edit-address1" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+        <input type='text' id='address1' name='address1' class='address-field temp-hidden'>
+    <br />
 
-        <span id='address1-success'></span>
-    </label><br />
+{% if address2 %}
+    <span id="current-address2" class="current-address">{{ address2 }}</span>
+{% else %}
+    <span id="current-address2" class="current-address"></span>
+    <span class="current-address">------</span>
+{% endif %}
 
-    <label for='address2' class='org-field'>Address Line 2: <span id="current-address2">{{ address2  }}</span>
+        <input type='text' id='address2' name='address2' class='address-field temp-hidden'>
+    <br />
 
-        <input type='text' id='address2' name='address2' class='temp-hidden'>
+    <span id="current-city" class="current-address">{{ city }}</span><input type='text' id='city' name='city' class='address-field temp-hidden'>,
 
-        <button type="button" id="button-address2" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+    <span id="current-state" class="current-address">{{ state }}</span>
 
-        <span id="edit-address2" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-
-        <span id='address2-success'></span>
-    </label><br />
-
-    <label for='city' class='org-field'>City: <span id="current-city">{{ city }}</span>
-
-        <input type='text' id='city' name='city' class='temp-hidden'>
-
-        <button type="button" id="button-city" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
-
-        <span id="edit-city" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-
-        <span id='city-success'></span>
-    </label><br />
-
-    <label for='state' class='org-field'>State: <span id="current-state">{{ state }}</span>
-
-        <select name='state' id='state' class='temp-hidden'>
+        <select name='state' id='state' class='address-field temp-hidden'>
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
             <option value="AZ">Arizona</option>
@@ -167,23 +162,14 @@
             <option value="WY">Wyoming</option>
     </select>
 
-        <button type="button" id="button-state" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+    <span id="current-zipcode" class="current-address">{{ zipcode }}</span>
 
-        <span id="edit-state" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+        <input type='text' id='zipcode' name='zipcode' class='address-field temp-hidden'>
+    <br />
 
-        <span id='state-success'></span>
-    </label><br />
+    <button type="button" id="button-address" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
-    <label for='zipcode' class='org-field'>Zipcode: <span id="current-zipcode">{{ zipcode }}</span>
-
-        <input type='text' id='zipcode' name='zipcode' class='temp-hidden'>
-
-        <button type="button" id="button-zipcode" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
-
-        <span id="edit-zipcode" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-
-        <span id='zipcode-success'></span>
-    </label><br />
+</label>
 
 
 <h4>Contacts</h4>

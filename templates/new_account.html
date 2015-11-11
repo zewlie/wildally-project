@@ -5,7 +5,7 @@
 
   {% block content %} 
 
-  {% if session['username'] %}
+  {% if session['user_id'] %}
     You've already got an account!
   {% else %}
   <form action='/user-added' method="POST">

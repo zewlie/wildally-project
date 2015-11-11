@@ -68,6 +68,12 @@ var markerArray = [];
       for (var key in orgs) {
           org = orgs[key];
 
+          var markerIcon = 'generic';
+          if (org.animals.length < 5 & org.animals.length > 0) {
+            var randomIndex = Math.floor(Math.random() * org.animals.length);
+            markerIcon = org.animals[randomIndex];
+          }
+
           var acceptVolunteers = org.accept_volunteers;
 
           // Define the marker
@@ -76,7 +82,7 @@ var markerArray = [];
               map: map,
               animation: google.maps.Animation.DROP,
               title: org.orgName,
-              icon: 'http://maps.google.com/mapfiles/marker_green.png',
+              icon: '/static/img/wildally_marker_' + markerIcon + '.png',
           });
 
           // Adding some special attributes to each marker object
@@ -138,8 +144,7 @@ var markerArray = [];
   function dropUserMarker(userCoords) {
 
         userMarker.setPosition(userCoords);
-        userMarker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ userMarker.setAnimation(null); }, 750);
+        showMarkerWithAnimation(userMarker);
 
   }
 
@@ -182,22 +187,44 @@ var markerArray = [];
           markerArray[one].setVisible(false);
         }
       }
-    } else {
-      for (one = 0; one < markerArray.length; one++) {
-        markerArray[one].setVisible(true);
-      }
+    // } else {
+    //   for (one = 0; one < markerArray.length; one++) {
+    //     if (!markerArray[one].visible){
+    //     // showMarkerWithAnimation(markerArray[one]);
+    //     }
+    //   }
     }
 
     for (one = 0; one < markerArray.length; one++) {
       for (var animal in onlyShow["animals"]) {
-        console.log(onlyShow["animals"][animal]);
-        console.log(markerArray[one].animals);
+        // console.log(onlyShow["animals"][animal]);
+        // console.log(markerArray[one].animals);
         if (($.inArray(onlyShow["animals"][animal],markerArray[one].animals)) < 0) {
           markerArray[one].setVisible(false);
         }
       }
   
   }
+}
+
+// Before hiding markers, animate their removal from the map
+function removeMarkerWithAnimation(marker){
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+
+  setTimeout(function(){
+    marker.setAnimation(null);
+    marker.setVisible(false);
+     }, 720);
+
+}
+
+function showMarkerWithAnimation(marker){
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+  marker.setVisible(true);
+
+    setTimeout(function(){
+      marker.setAnimation(null);
+    }, 720);
 }
 
 // Update the showOnly object (filters) when any checkbox is checked/unchecked

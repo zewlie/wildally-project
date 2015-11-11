@@ -219,14 +219,9 @@ def update_settings():
     attributes = {'user': ['username',
                             'email',
                             'password'],
-                'org': ['name',
+                  'org': ['name',
                         'ein',
                         'show_address',
-                        'address1',
-                        'address2',
-                        'city',
-                        'state',
-                        'zipcode',
                         'desc',
                         'phone',
                         'org-email',
@@ -240,7 +235,10 @@ def update_settings():
     setting_value = request.args.get("settingValue")
 
     if setting_name in attributes['user']:
+
         user = db.session.query(User).filter(User.id == user_id).first()
+        if setting_name == 'password':
+            setting_value = user.hash_pw(setting_value)
         setattr(user, setting_name, setting_value)
         db.session.commit()
 
@@ -259,8 +257,33 @@ def update_settings():
         if getattr(org, setting_name) == setting_value:
             return jsonify({'success': 'yes'})
 
+    # TODO: this is missing a failure check.
+    elif setting_name == 'address':
+        org = db.session.query(Org).filter(Org.user_id == user_id).first()
+        address1, address2, city, state, zipcode = setting_value.split('+')
+        setattr(org, 'address1', address1)
+        setattr(org, 'address2', address2)
+        setattr(org, 'city', city)
+        setattr(org, 'state', state)
+        setattr(org, 'zipcode', zipcode)
+        db.session.commit()
+
+        coords = org.make_geocode()
+
+        pickup = db.session.query(Pickup).filter(Pickup.org_id == org.id).first()
+        setattr(pickup, 'latitude', coords[0])
+        setattr(pickup, 'longitude', coords[1])
+        db.session.commit()
+
+        return jsonify({'success': 'yes'})
+
+
     return jsonify({'success': 'no'})
 
+@app.route('/analytics')
+def show_analytics():
+
+    return render_template('analytics.html')
 
 @app.route('/orgs.json')
 def org_info():
