@@ -3,17 +3,25 @@
 from jinja2 import StrictUndefined
 from datetime import datetime
 
-from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify
+import os
+from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
 from flask_debugtoolbar import DebugToolbarExtension
 from redis import Redis
 from celery import Celery
+from werkzeug import secure_filename
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
 
+# File upload settings
+UPLOAD_FOLDER = './static/user/'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:5000'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:5000'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
@@ -31,6 +39,7 @@ app.jinja_env.undefined = StrictUndefined
 # Functions not associated with particular routes
 #################################################################################
 
+##################################################
 
 @app.route('/')
 def index():
@@ -279,6 +288,33 @@ def update_settings():
 
 
     return jsonify({'success': 'no'})
+
+
+@app.route('/uploads/<filename>')
+def uploaded_photo(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img',filename)
+
+
+@app.route('/photos', methods=['GET', 'POST'])
+def manage_photos():
+
+    def allowed_file(filename):
+        return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+    if request.method == 'POST':
+        file = request.files['photo']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            if os.path.lexists(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img') == False:
+                os.makedirs(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img')
+
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img', filename))
+            return redirect(url_for('uploaded_photo',
+                                    filename=filename))
+    else:
+        return render_template('photos.html')
+
 
 @app.route('/analytics')
 def show_analytics():
