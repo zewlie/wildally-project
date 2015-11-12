@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Register for WildAlly
+{% endblock %}
+
+  {% block content %} 
+
+  {% if session['user_id'] == 'None' %}
+    <p>You need to log in to see this page!</p>
+  {% else %}
+  <p></p>
+
+
+  {% endif %}
+
+
+  {% endblock %}

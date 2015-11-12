@@ -54,7 +54,7 @@ function initMap() {
 
 // Create info window
 var infoWindow = new google.maps.InfoWindow({
-      width: 250
+      width: 200
   });
 
 var markerArray = [];
@@ -62,7 +62,7 @@ var markerArray = [];
   // Grab marker JSON with AJAX
   $.get('/orgs.json', function (orgs) {
 
-      var org, marker, html, printAddress;
+      var org, marker, html, printAddress, orgPhoto;
 
 
       for (var key in orgs) {
@@ -93,6 +93,10 @@ var markerArray = [];
           // Add the new marker to the markerArray
           markerArray.push(marker);
 
+          if (org.photoFilenames) {
+              orgPhoto = '<img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '><br />';
+          }
+
           if (org.address1) {
               if (org.address2) {
                   printAddress = org.address1 + '<br />' + org.address2;
@@ -103,6 +107,7 @@ var markerArray = [];
           // Define the content of the infoWindow
           html = (
               '<div class="window-content">' +
+                  orgPhoto +
                   '<h3>' + org.orgName + '</h3>' +
                   '<h5>' + org.phone + '</h5>' +
                   '<p>' + printAddress +

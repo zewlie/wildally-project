@@ -204,7 +204,7 @@ def manage_account():
     else:
         is_org = 0
 
-    return render_template('settings.html', is_org=is_org, 
+    return render_template('settings.html', is_org=is_org,
                                             username=user.username, 
                                             email=user.email,
                                             org_name=org.name,
@@ -313,11 +313,16 @@ def manage_photos():
             file.save(os.path.join(photo_dir, filename))
             # return redirect(url_for('uploaded_photo',
             #                         filename=filename))
-            return redirect('/photos')
+            return jsonify({'success': 'yes'})
     else:
-        for root, dirs, filenames in os.walk(photo_dir):
-            root = root
-            filenames = filenames
+        if os.path.lexists(photo_dir):
+            for root, dirs, filenames in os.walk(photo_dir):
+                root = root
+                filenames = filenames
+        else:
+            root = None
+            filenames = None
+
         return render_template('photos.html', root=root, filenames=filenames)
 
 
@@ -329,6 +334,8 @@ def show_analytics():
 @app.route('/orgs.json')
 def org_info():
     """JSON information about orgs."""
+
+    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
 
     orgs = {
         org.id: {
@@ -346,8 +353,18 @@ def org_info():
             "longitude": org.pickups[0].longitude,
             "acceptAnimals": org.accept_animals,
             "acceptVolunteers": org.accept_volunteers,
-            "animals": []
+            "animals": [],
+            "photoRoot": None,
+            "photoFilenames": None,
         } for org in Org.query.all()}
+
+    rows = Org.query.all()
+    for org in rows:
+        photo_dir = app.config['UPLOAD_FOLDER'] + str(org.user_id) + '/img'
+        if os.path.lexists(photo_dir):
+            for root, dirs, filenames in os.walk(photo_dir):
+                orgs[org.id]["photoRoot"]= root
+                orgs[org.id]["photoFilenames"] = filenames
 
     org_animals = {}
 

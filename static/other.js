@@ -171,8 +171,34 @@ function showUpdateFailure(elementId) {
 
 }
 
+function uploadPhoto(evt) {
+        // var form_data = new FormData('file', $('#photo')[0]);
+
+        var fileInput = document.getElementById("photo");
+        console.log(fileInput);
+        var file = fileInput.files[0];
+        console.log(file);
+        var formData = new FormData();
+        console.log(formData);
+        formData.append('file', file);
+        console.log(formData['file']);
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/photos',
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            async: false,
+        });
+    }
+
+
 
 
 $('.click-to-edit').on("click", toggleSettingsField);
 $('.click-to-save').on("click", saveOneField);
 // $('.click-to-save-radio').on("click", saveOneRadioField);
+$('#upload-photo').on("click", uploadPhoto);
