@@ -94,10 +94,11 @@ console.log(animalTypes);
               map: map,
               animation: google.maps.Animation.DROP,
               title: org.orgName,
-              icon: '/static/img/wildally_marker_' + markerIcon + '.png',
+              icon: 'static/img/wildally_marker_' + markerIcon + '.png#' + key,
           });
 
           // Adding some special attributes to each marker object
+          marker.orgId = key;
           marker.intake = org.acceptAnimals;
           marker.volunteers = org.acceptVolunteers;
           marker.animals = org.animals;
@@ -174,6 +175,7 @@ console.log(animalTypes);
           // Inside the loop we call bindInfoWindow passing it the marker,
           // map, infoWindow and contentString
           bindInfoWindow(marker, map, infoWindow, html);
+          markerClick(marker);
 
       }
 
@@ -188,6 +190,13 @@ console.log(animalTypes);
           infoWindow.close();
           infoWindow.setContent(html);
           infoWindow.open(map, marker);
+      });
+  }
+
+  function markerClick(marker) {
+      google.maps.event.addListener(marker, 'click', function () {
+          sendClickToCelery(marker);
+          map.setCenter(marker.getPosition());
       });
   }
 
@@ -294,7 +303,6 @@ function showMarkerWithAnimation(marker){
     var thisFilter = this.id;
 
     if (thisFilter == "accepting-volunteers") {
-      console.log(onlyShow["animals"]);
       if($(this).is(':checked')){
         onlyShow["acceptVolunteers"] = true;
       } else {
@@ -303,24 +311,64 @@ function showMarkerWithAnimation(marker){
     } else {
       if($(this).is(':checked')){
          onlyShow["animals"].push(thisFilter[0]);
-         console.log(onlyShow["animals"]);
       } else {
           var removeThis = onlyShow["animals"].indexOf(thisFilter[0]);
           if (removeThis > -1) {
               onlyShow["animals"].splice(removeThis, 1);
-              console.log(onlyShow["animals"]);
           }
       }
 
     }
       updateMap();
       console.log(onlyShow["animals"]);
+      console.log(onlyShow["acceptVolunteers"]);
+
+  }
+
+  function returnClickSuccess(data) {
+    console.log("SUCCESS");
+  }
+
+  function sendClickToCelery(marker) {
+    console.log("WIN");
+    var clickedOrg = marker.orgId;
+    console.log(clickedOrg);
+    var currentFilters = [];
+
+    if (onlyShow["acceptVolunteers"] === true) {
+        currentFilters.push('volunteers');
+    }
+
+    for (var i = 0; i < onlyShow["animals"].length; i++) {
+        currentFilters.push(onlyShow["animals"][i]);
+    }
+
+    console.log(currentFilters);
+
+        $.post('/_track-click', {
+        'orgId': clickedOrg,
+        'currentFilters': currentFilters
+      }, returnClickSuccess);
+
+    // var clickJSON = {
+    //     'orgId': clickedOrg,
+    //     'currentFilters': currentFilters
+    //   };
+
+        // $.ajax({
+        //   type: 'POST',
+        //   url: '/_track-click',
+        //   data: clickJSON,
+        //   // dataType: 'json'
+        // });
+
   }
 
 // Listen for changes to the filters / address bar
     $('.map-filter-cb').on("click", updateFilters);
     $('#submit-address').on("click", updateMapCenter);
-    autocomplete.addListener('place_changed', onPlaceChanged);
+    // $("img[src='static/img/wildally_marker_2.png#5']").on("click", sendClickToCelery);
+    // autocomplete.addListener('place_changed', onPlaceChanged);
 
 }
 

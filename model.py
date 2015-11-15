@@ -308,6 +308,45 @@ class Course(db.Model):
                             backref=db.backref("courses"))
 
 
+# Analytics class
+class Click(db.Model):
+    """ """
+
+    __tablename__ = "clicks"
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    type_id = db.Column(db.Integer, nullable=False)
+    org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
+
+    org = db.relationship("Org",
+                            backref=db.backref("clicks"))
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Click id={} type_id={} org_id={} time={}>".format(self.id, self.type_id, self.org_id, self.time)
+
+# Analytics class
+class ClickFilter(db.Model):
+    """ """
+
+    __tablename__ = "click_filters"
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    click_id = db.Column(db.Integer, db.ForeignKey('clicks.id'), nullable=False)
+    filter_id = db.Column(db.Integer, nullable=False)
+
+    click = db.relationship("Click",
+                            backref=db.backref("click_filters"))
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<ClickFilter id={} click_id={} filter_id={}>".format(self.id, self.click_id, self.filter_id)
+
+
+
 
 
 

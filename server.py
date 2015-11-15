@@ -39,10 +39,47 @@ app.jinja_env.undefined = StrictUndefined
 ##################################################
 
 
-@celery.task
-def gather_analytics(data):
-    # some long running task here
-    return result
+
+def gather_clicks(one):
+    """ """
+
+    one2 = one
+
+    print "GOT INTO CELERY TASK"
+    
+    click = Click(type_id=1,
+                org_id=5,
+                time=datetime.now())
+
+    db.session.add(click)
+    session.flush()
+
+
+    print "GOT PAST FIRST INSERT"
+
+    # for i in kwarg2:
+    click_filter = ClickFilter(click_id=click.id,
+                               filter_id=2)
+
+    db.session.add(click_filter)
+    db.session.commit()
+
+    return
+
+@app.route('/_track-click', methods=['POST'])
+def track_click():
+    """Grab click info from map, send through to celery worker."""
+
+    print "GOT TO FLASK"
+    org_id = request.form.get("orgId")
+    current_filters = request.form.get("currentFilters")
+
+    if current_filters == None:
+        current_filters = 0;
+
+    gather_clicks(1)
+
+    return jsonify({"success": "yes"})
 
 
 @app.route('/')
