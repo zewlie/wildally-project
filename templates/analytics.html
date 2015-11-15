@@ -8,10 +8,125 @@
   {% if session['user_id'] == 'None' %}
     <p>You need to log in to see this page!</p>
   {% else %}
-  <p></p>
+  
+<div class="col-sm-7 col-md-8">
+<canvas id="myChart" width="750" height="380"></canvas>
+</div>
+
+<div class="col-sm-2 col-md-2">
+<canvas id="myChart2" width="190" height="190"></canvas>
+<canvas id="myChart3" width="190" height="190"></canvas>
+</div>
 
 
   {% endif %}
+
+<script src="http://www.chartjs.org/assets/Chart.js"></script>
+  <script>
+
+// data for 1st chart: clicks vs. area searches
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [
+        {
+            label: "My First dataset",
+            fillColor: "rgba(220,220,220,0.2)",
+            strokeColor: "rgba(220,220,220,1)",
+            pointColor: "rgba(220,220,220,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: [65, 59, 80, 81, 56, 55, 40]
+        },
+        {
+            label: "My Second dataset",
+            fillColor: "rgba(151,187,205,0.2)",
+            strokeColor: "rgba(151,187,205,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: [28, 48, 40, 19, 86, 27, 90]
+        }
+    ]
+};
+
+// 1st chart: clicks vs. area searches
+var ctx = document.getElementById("myChart").getContext("2d");
+var myLineChart = new Chart(ctx).Line(data);
+
+// data for 2nd chart: pie comparison of filters
+var data2 = [
+    {
+        value: 300,
+        color: "rgba(220,220,220,1)",
+        highlight: "rgba(220,220,220,1)",
+        label: "Red"
+    },
+    {
+        value: 50,
+        color: "rgba(151,187,205,0.2)",
+        highlight: "rgba(151,187,205,0.2)",
+        label: "Green"
+    },
+    {
+        value: 100,
+        color: "rgba(151,187,205,1)",
+        highlight: "rgba(151,187,205,1)",
+        label: "Yellow"
+    }
+]
+
+// 2nd chart: pie comparison of filters
+var ctx2 = document.getElementById("myChart2").getContext("2d");
+var myPieChart1 = new Chart(ctx2).Pie(data2, {animateScale: true});
+
+// data for 3rd chart: pie comparison of filters for all searches
+var data3 = [
+    {
+        value: 300,
+        color: "rgba(220,220,220,1)",
+        highlight: "rgba(220,220,220,1)",
+        label: "Red"
+    },
+    {
+        value: 50,
+        color: "rgba(151,187,205,0.2)",
+        highlight: "rgba(151,187,205,0.2)",
+        label: "Green"
+    },
+    {
+        value: 100,
+        color: "rgba(151,187,205,1)",
+        highlight: "rgba(151,187,205,1)",
+        label: "Yellow"
+    },
+        {
+        value: 100,
+        color: "rgba(151,187,205,0.7)",
+        highlight: "rgba(151,187,205,0.7)",
+        label: "Yellow"
+    },
+        {
+        value: 100,
+        color: "rgba(220,220,220,0.5)",
+        highlight: "rgba(220,220,220,0.5)",
+        label: "Yellow"
+    },
+        {
+        value: 100,
+        color: "rgba(151,187,205,0.5)",
+        highlight: "rgba(151,187,205,0.5)",
+        label: "Yellow"
+    }
+]
+
+// 3rd chart: pie comparison of filters for all searches
+var ctx3 = document.getElementById("myChart3").getContext("2d");
+var myPieChart2 = new Chart(ctx3).Pie(data3, {animateScale: true});
+
+
+  </script>
 
 
   {% endblock %}

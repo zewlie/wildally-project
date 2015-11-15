@@ -13,6 +13,7 @@ var onlyShow = {"acceptAnimals": false,
                 };
 
 function initMap() {
+  var animalTypes = {};
 
   // HTML5 geolocation
   if (navigator.geolocation) {
@@ -59,14 +60,25 @@ var infoWindow = new google.maps.InfoWindow({
 
 var markerArray = [];
 
+$.get('/animals.json', function (animals) {
+    for (var key in animals) {
+      animal = animals[key];
+      animalTypes[key] = animal.typeName;
+    }
+});
+
+console.log(animalTypes);
+
   // Grab marker JSON with AJAX
   $.get('/orgs.json', function (orgs) {
 
-      var org, marker, html, printAddress, orgPhoto;
+      var org, marker, html, printAddress, orgPhoto, orgAnimals;
 
 
       for (var key in orgs) {
           org = orgs[key];
+          orgPhoto = '<span></span>';
+          orgAnimals = ' ';
 
           var markerIcon = 'generic';
           if (org.animals.length < 5 & org.animals.length > 0) {
@@ -97,12 +109,54 @@ var markerArray = [];
               orgPhoto = '<img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '><br />';
           }
 
+          if (org.photoFilenames){
+          if (org.photoFilenames.length == 1) {
+              orgPhoto = '<img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '><br />';
+          } else {
+              var carousel = '<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">';
+              var indicators = '<ol class="carousel-indicators">' +
+                                '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>';
+              var slides = '<div class="carousel-inner" role="listbox">' +
+                           '<div class="item active">' +
+                           '<img src=' + org.photoRoot + '/' + org.photoFilenames[0] + '>' +
+                           '</div>';
+              var controls = '<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">' +
+                             '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>' +
+                             '<span class="sr-only">Previous</span></a>' +
+                             '<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">' +
+                             '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>' +
+                             '<span class="sr-only">Next</span></a>';
+              for (i = 1; i < org.photoCount; i++) {
+                  indicators = indicators.concat('<li data-target="#myCarousel" data-slide-to="' + i + '"></li>');
+              }
+              indicators = indicators.concat('</ol>');
+              for (i = 1; i < org.photoFilenames.length; i++){
+                  slides = slides.concat('<div class="item"><img src=' +  org.photoRoot + '/' + org.photoFilenames[i] + '></div>');
+              }
+              slides = slides.concat('</div>');
+              carousel = carousel.concat(indicators);
+              carousel = carousel.concat(slides);
+              carousel = carousel.concat(controls);
+              carousel = carousel.concat('</div>');
+
+              orgPhoto = carousel;
+          }
+        }
+
           if (org.address1) {
               if (org.address2) {
                   printAddress = org.address1 + '<br />' + org.address2;
               } else {
                   printAddress = org.address1 + '<br />'; }
           } else { printAddress = 'This is an approximate location. Please call for directions. <br />'; }
+
+          if (org.animals.length == 5) {
+              orgAnimals = '<li>all wildlife</li>';
+          } else {
+              for (i = 0; i < org.animals.length; i++) {
+                  orgAnimals = orgAnimals.concat('<li>' + animalTypes[org.animals[i]] + '</li>');
+              }
+            }
 
           // Define the content of the infoWindow
           html = (
@@ -114,7 +168,8 @@ var markerArray = [];
                         org.city + ', ' +
                         org.state + ' ' +
                         org.zipcode +
-                  '</p>' + '<p>' + org.desc + '</p></div>');
+                  '</p>' + '<p>' + org.desc + '</p>' +
+                  '<h5>Animals accepted</h5><ul>' + orgAnimals + '</ul></div>');
 
           // Inside the loop we call bindInfoWindow passing it the marker,
           // map, infoWindow and contentString

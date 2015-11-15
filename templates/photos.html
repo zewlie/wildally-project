@@ -7,21 +7,21 @@
 
   {% if session['user_id'] == 'None' %}
     <p>You need to log in to see this page!</p>
+
   {% else %}
+
 {% if filenames %}
 {% for filename in filenames %}
 <img class='thumbnail' src={{ root }}/{{ filename }}>
 {% endfor %}
-{% endif %}
 
-{% if filenames %}
-<div id="myCarousel" class="carousel slide" data-ride="carousel">
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    <li data-target="#myCarousel" data-slide-to="2"></li>
-    <li data-target="#myCarousel" data-slide-to="3"></li>
+{% for number in range(1,file_count) %}
+    <li data-target="#myCarousel" data-slide-to={{ number }}></li>
+{% endfor %}
   </ol>
 
   <!-- Wrapper for slides -->
@@ -29,7 +29,7 @@
     <div class="item active">
       <img src={{ root }}/{{ filenames[0] }}>
     </div>
-    {% for filename in filenames %}
+    {% for filename in filenames[1:] %}
     <div class="item">
       <img src={{ root }}/{{ filename }}>
     </div>
@@ -50,8 +50,29 @@
 
 <p>Upload a photo!</p>
 <form action="" method="POST" id="photo-form" enctype="multipart/form-data">
-      <input type="file" name="photo" id="photo"><button type="button" id="upload-photo" class="btn btn-success btn-xs">Upload Photo</button>
+      <input type="file" name="photo" id="photo">
+      <!-- <button type="button" id="upload-photo" class="btn btn-success btn-xs">Upload Photo</button> -->
+      <input type="submit" value="Upload Photo">
 </form>
+
+<script>
+// function uploadPhoto(evt) {
+//     evt.preventDefault();
+
+//     var myfile = $('#photo').files[0];
+//     console.log(myfile);
+//     var formData = new FormData();
+
+//     formData.append('file', myfile);
+
+//       $.post('/photos', formData, function(){
+//         console.log("woo");
+//       });
+// }
+
+// $('#photo-form').on('submit',uploadPhoto);
+
+</script>
 
 {% endif %}
   {% endblock %}

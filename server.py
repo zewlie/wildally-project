@@ -6,8 +6,8 @@ from datetime import datetime
 import os
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
 from flask_debugtoolbar import DebugToolbarExtension
-from redis import Redis
-from celery import Celery
+# from redis import Redis
+# from celery import Celery
 from werkzeug import secure_filename
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
@@ -17,14 +17,14 @@ UPLOAD_FOLDER = './static/user/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:5000'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:5000'
+# app.config['CELERY_BROKER_URL'] = 'redis://localhost:5000'
+# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:5000'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
@@ -228,7 +228,7 @@ def update_settings():
     attributes = {'user': ['username',
                             'email',
                             'password'],
-                  'org': ['name',
+                  'org': ['org-name',
                         'ein',
                         'show_address',
                         'desc',
@@ -313,17 +313,23 @@ def manage_photos():
             file.save(os.path.join(photo_dir, filename))
             # return redirect(url_for('uploaded_photo',
             #                         filename=filename))
-            return jsonify({'success': 'yes'})
+            return redirect('/photos')
+        return jsonify({'success': 'no'})
+
     else:
+        file_count = 0
         if os.path.lexists(photo_dir):
             for root, dirs, filenames in os.walk(photo_dir):
                 root = root
                 filenames = filenames
+
+                for filename in filenames:
+                    file_count += 1
         else:
             root = None
             filenames = None
 
-        return render_template('photos.html', root=root, filenames=filenames)
+        return render_template('photos.html', file_count=file_count, root=root, filenames=filenames)
 
 
 @app.route('/analytics')
@@ -356,6 +362,7 @@ def org_info():
             "animals": [],
             "photoRoot": None,
             "photoFilenames": None,
+            "photoCount": 0,
         } for org in Org.query.all()}
 
     rows = Org.query.all()
@@ -365,6 +372,8 @@ def org_info():
             for root, dirs, filenames in os.walk(photo_dir):
                 orgs[org.id]["photoRoot"]= root
                 orgs[org.id]["photoFilenames"] = filenames
+                for filename in filenames:
+                    orgs[org.id]["photoCount"] += 1
 
     org_animals = {}
 
@@ -375,12 +384,26 @@ def org_info():
 
     return jsonify(orgs)
 
+@app.route('/animals.json')
+def animal_info():
+    """JSON information about animal types."""
+
+    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
+
+    animals = {
+        animal.id: {
+            "typeName": animal.name,
+            "desc" : animal.desc,
+        } for animal in Animal.query.all()}
+
+    return jsonify(animals)
+
 
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = True
+    app.debug = False
 
     connect_to_db(app)
 

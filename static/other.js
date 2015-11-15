@@ -201,4 +201,4 @@ function uploadPhoto(evt) {
 $('.click-to-edit').on("click", toggleSettingsField);
 $('.click-to-save').on("click", saveOneField);
 // $('.click-to-save-radio').on("click", saveOneRadioField);
-$('#upload-photo').on("click", uploadPhoto);
+// $('#upload-photo').on("click", uploadPhoto);
