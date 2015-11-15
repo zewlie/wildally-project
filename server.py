@@ -6,8 +6,8 @@ from datetime import datetime
 import os
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
 from flask_debugtoolbar import DebugToolbarExtension
-# from redis import Redis
-# from celery import Celery
+from redis import Redis
+from celery import Celery
 from werkzeug import secure_filename
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
@@ -17,14 +17,14 @@ UPLOAD_FOLDER = './static/user/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
-# app.config['CELERY_BROKER_URL'] = 'redis://localhost:5000'
-# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:5000'
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 
-# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-# celery.conf.update(app.config)
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
@@ -33,13 +33,17 @@ app.secret_key = "ABC"
 # This is horrible. Fix this so that, instead, it raises an error.
 app.jinja_env.undefined = StrictUndefined
 
-# Redis
-# redis = Redis()
-
 # Functions not associated with particular routes
 #################################################################################
 
 ##################################################
+
+
+@celery.task
+def gather_analytics(data):
+    # some long running task here
+    return result
+
 
 @app.route('/')
 def index():
