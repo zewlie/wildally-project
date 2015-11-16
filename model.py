@@ -335,7 +335,7 @@ class ClickFilter(db.Model):
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     click_id = db.Column(db.Integer, db.ForeignKey('clicks.id'), nullable=False)
-    filter_id = db.Column(db.Integer, nullable=False)
+    filter_id = db.Column(db.String(50), nullable=False)
 
     click = db.relationship("Click",
                             backref=db.backref("click_filters"))

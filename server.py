@@ -10,7 +10,7 @@ from redis import Redis
 from celery import Celery
 from werkzeug import secure_filename
 
-from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, connect_to_db, db
+from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, Click, ClickFilter, connect_to_db, db
 
 # File upload settings
 UPLOAD_FOLDER = './static/user/'
@@ -39,45 +39,43 @@ app.jinja_env.undefined = StrictUndefined
 ##################################################
 
 
-
-def gather_clicks(one):
+# @celery.task
+def gather_clicks(org_id, current_filters):
     """ """
 
-    one2 = one
-
-    print "GOT INTO CELERY TASK"
-    
-    click = Click(type_id=1,
-                org_id=5,
+    click = Click(type_id="1",
+                org_id=org_id,
                 time=datetime.now())
 
     db.session.add(click)
-    session.flush()
-
-
-    print "GOT PAST FIRST INSERT"
-
-    # for i in kwarg2:
-    click_filter = ClickFilter(click_id=click.id,
-                               filter_id=2)
-
-    db.session.add(click_filter)
+    db.session.flush()
     db.session.commit()
+
+    if current_filters:
+        for each in current_filters:
+            click_filter = ClickFilter(click_id=click.id,
+                                       filter_id=each)
+            db.session.add(click_filter)
+        db.session.commit()
 
     return
 
-@app.route('/_track-click', methods=['POST'])
+
+@app.route('/_track-click', methods=['GET', 'POST'])
 def track_click():
     """Grab click info from map, send through to celery worker."""
-
-    print "GOT TO FLASK"
+    
     org_id = request.form.get("orgId")
     current_filters = request.form.get("currentFilters")
 
-    if current_filters == None:
-        current_filters = 0;
+    if current_filters == "filters&":
+        current_filters = None
 
-    gather_clicks(1)
+    else:
+        current_filters = current_filters.strip("filters&")
+        current_filters = current_filters.split("&")
+
+    gather_clicks(org_id, current_filters)
 
     return jsonify({"success": "yes"})
 

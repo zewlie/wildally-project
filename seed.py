@@ -4,6 +4,7 @@ from model import User, Org, Pickup, Animal, ContactType, SiteType, OrgAnimal
 
 import csv
 from datetime import datetime
+from random import randint
 
 from model import connect_to_db, db
 from server import app
@@ -49,6 +50,12 @@ def load_users():
         username = username.replace(" ", "")
         username = username[:25]
         account_made = datetime.now()
+
+        username_match = db.session.query(User).filter(User.username == username).first()
+
+        if username_match:
+            while username_match.username == username:
+                username = username[:24] + str(randint(0,9))
 
         user = User(email='email@email.com',
                     username=username,

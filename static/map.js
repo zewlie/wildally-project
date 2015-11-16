@@ -196,7 +196,7 @@ console.log(animalTypes);
   function markerClick(marker) {
       google.maps.event.addListener(marker, 'click', function () {
           sendClickToCelery(marker);
-          map.setCenter(marker.getPosition());
+          map.panTo(marker.getPosition());
       });
   }
 
@@ -333,14 +333,14 @@ function showMarkerWithAnimation(marker){
     console.log("WIN");
     var clickedOrg = marker.orgId;
     console.log(clickedOrg);
-    var currentFilters = [];
+    var currentFilters = 'filters';
 
     if (onlyShow["acceptVolunteers"] === true) {
-        currentFilters.push('volunteers');
+        currentFilters = currentFilters + '&volunteers';
     }
 
     for (var i = 0; i < onlyShow["animals"].length; i++) {
-        currentFilters.push(onlyShow["animals"][i]);
+        currentFilters = currentFilters + '&' + onlyShow["animals"][i];
     }
 
     console.log(currentFilters);
