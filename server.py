@@ -1,7 +1,7 @@
 """Wildally server."""
 
 from jinja2 import StrictUndefined
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 import os
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
@@ -102,7 +102,7 @@ def login_success():
 
     username = request.form.get("username")
     password = request.form.get("password")
-    user = db.session.query(User).filter(User.username == username).first()
+    user = db.session.query(User).filter(User.username == username).one()
     passcheck = user.verify_pw(password)
 
     if user is None or passcheck is False:
@@ -436,6 +436,69 @@ def animal_info():
         } for animal in Animal.query.all()}
 
     return jsonify(animals)
+
+
+@app.route('/analytics.json')
+def analytics_json():
+    """JSON information about the logged-in org-user's analytics"""
+
+    now = datetime.now()
+    today = now.date()
+
+    previous_days = 6
+    previous_hours = 11
+
+    analytics = {
+                 "week": {},
+                 "day": {},
+                 "filters": {},
+                 "allfilters": {},
+                 }
+
+    analytics["week"]["day0"] = [date.strftime(today, "%m/%d"), 0]
+    analytics["day"]["hour0"] = [date.strftime(now, "%I %p").lstrip("0"), 0]
+    analytics["filters"]["volunteers"] = ["volunteers", 0]
+    analytics["filters"]["none"] = ["none", 0]
+
+    animals = db.session.query(Animal).all()
+    for animal in animals:
+        analytics["filters"][str(animal.id)] = [animal.name, 0]
+        analytics["allfilters"][str(animal.id)] = [animal.name, 0]
+
+    while previous_days > 0:
+        day = today - timedelta(days=previous_days)
+        analytics["week"]["day" + str(previous_days)] = [date.strftime(day, "%m/%d"), 0]
+        previous_days -= 1
+
+    while previous_hours > 0:
+        hour = now - timedelta(hours=previous_hours)
+        analytics["day"]["hour" + str(previous_hours)] = [date.strftime(hour, "%I %p").lstrip("0"), 0]
+        previous_hours -= 1
+
+    user_id = session['user_id']
+    org = db.session.query(Org).filter(Org.user_id == user_id).one()
+    org_id = org.id
+    clicks = db.session.query(Click).filter(Click.org_id == org_id).all()
+
+    for click in clicks:
+        day_delta = (today - click.time.date()).days
+        hour_delta = (now - click.time).seconds / 3600
+        analytics["week"]["day" + str(day_delta)][1] += 1
+        analytics["day"]["hour" + str(hour_delta)][1] += 1
+        
+        for click_filter in click.click_filters:
+            if str(click_filter.filter_id) in analytics["filters"].keys():
+                analytics["filters"][str(click_filter.filter_id)][1] += 1
+
+    all_filters = db.session.query(ClickFilter).all()
+
+    for click_filter in all_filters:
+        if str(click_filter.filter_id) in analytics["allfilters"].keys():
+            analytics["allfilters"][str(click_filter.filter_id)][1] += 1
+
+
+
+    return jsonify(analytics)
 
 
 
