@@ -468,6 +468,7 @@ def analytics_json():
     while previous_days > 0:
         day = today - timedelta(days=previous_days)
         analytics["week"]["day" + str(previous_days)] = [date.strftime(day, "%m/%d"), 0]
+        # analytics["week"].append(["day" + str(previous_days), date.strftime(day, "%m/%d"), 0])
         previous_days -= 1
 
     while previous_hours > 0:
@@ -480,11 +481,14 @@ def analytics_json():
     org_id = org.id
     clicks = db.session.query(Click).filter(Click.org_id == org_id).all()
 
+
     for click in clicks:
         day_delta = (today - click.time.date()).days
         hour_delta = (now - click.time).seconds / 3600
-        analytics["week"]["day" + str(day_delta)][1] += 1
-        analytics["day"]["hour" + str(hour_delta)][1] += 1
+        if day_delta < 7:
+            analytics["week"]["day" + str(day_delta)][1] += 1
+        if hour_delta < 12:
+            analytics["day"]["hour" + str(hour_delta)][1] += 1
         
         for click_filter in click.click_filters:
             if str(click_filter.filter_id) in analytics["filters"].keys():
