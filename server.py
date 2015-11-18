@@ -2,6 +2,7 @@
 
 from jinja2 import StrictUndefined
 from datetime import datetime, date, timedelta
+from math import floor
 
 import os
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
@@ -445,63 +446,166 @@ def analytics_json():
     now = datetime.now()
     today = now.date()
 
+    previous_weeks = 3
     previous_days = 6
-    previous_hours = 11
+    previous_hours = 23
 
     analytics = {
+                 "month": {},
                  "week": {},
                  "day": {},
-                 "filters": {},
-                 "allfilters": {},
+                 "filters": { "all": {},
+                              "day": {},
+                              "week": {},
+                              "month": {}, 
+                              },
+                 "allfilters": { "all": {},
+                                 "day": {},
+                                 "week": {},
+                                 "month": {}, 
+                              },
                  }
-
-    analytics["week"]["day0"] = [date.strftime(today, "%m/%d"), 0]
-    analytics["day"]["hour0"] = [date.strftime(now, "%I %p").lstrip("0"), 0]
-    analytics["filters"]["volunteers"] = ["volunteers", 0]
-    analytics["filters"]["none"] = ["none", 0]
 
     animals = db.session.query(Animal).all()
     for animal in animals:
-        analytics["filters"][str(animal.id)] = [animal.name, 0]
-        analytics["allfilters"][str(animal.id)] = [animal.name, 0]
+        for key in analytics["filters"]:
+            analytics["filters"][key][str(animal.id)] = [animal.name, 0]
+            analytics["filters"][key]["volunteers"] = ["volunteers", 0]
+            analytics["filters"][key]["none"] = ["none", 0]
 
-    while previous_days > 0:
+            analytics["allfilters"][key][str(animal.id)] = [animal.name, 0]
+            analytics["allfilters"][key]["volunteers"] = ["volunteers", 0]
+            analytics["allfilters"][key]["none"] = ["none", 0]
+
+
+    while previous_weeks >= 0:
+        week_end = today - timedelta(days=(6 + (previous_weeks * 7)))
+        week_start = week_end + timedelta(days=6)
+        analytics["month"]["week" + str(previous_weeks)] = [date.strftime(week_start, "%m/%d") + " - " + date.strftime(week_end, "%m/%d"), 0]
+        previous_weeks -= 1
+
+    while previous_days >= 0:
         day = today - timedelta(days=previous_days)
         analytics["week"]["day" + str(previous_days)] = [date.strftime(day, "%m/%d"), 0]
         # analytics["week"].append(["day" + str(previous_days), date.strftime(day, "%m/%d"), 0])
         previous_days -= 1
 
-    while previous_hours > 0:
-        hour = now - timedelta(hours=previous_hours)
-        analytics["day"]["hour" + str(previous_hours)] = [date.strftime(hour, "%I %p").lstrip("0"), 0]
+    while previous_hours >= 0:
+        hour_start = now - timedelta(hours=previous_hours)
+        hour_end = hour_start + timedelta(hours=1)
+        analytics["day"]["hour" + str(previous_hours)] = [date.strftime(hour_start, "%I %p").lstrip("0") + " - " + date.strftime(hour_end, "%I %p").lstrip("0"), 0]
         previous_hours -= 1
 
     user_id = session['user_id']
     org = db.session.query(Org).filter(Org.user_id == user_id).one()
     org_id = org.id
-    clicks = db.session.query(Click).filter(Click.org_id == org_id).all()
-
+    clicks = db.session.query(Click).all()
 
     for click in clicks:
+
+        for click_filter in click.click_filters:
+            if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
+                analytics["allfilters"]["all"][str(click_filter.filter_id)][1] += 1
+            elif str(click_filter.filter_id) == "volun":
+                analytics["allfilters"]["all"]["volunteers"][1] += 1
+            elif click_filter.filter_id == "":
+                analytics["allfilters"]["all"]["none"][1] += 1
+
+        if click.org_id == org_id:
+
+            for click_filter in click.click_filters:
+                if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
+                    analytics["filters"]["all"][str(click_filter.filter_id)][1] += 1
+                elif str(click_filter.filter_id) == "volun":
+                    analytics["filters"]["all"]["volunteers"][1] += 1
+                elif click_filter.filter_id == "":
+                    analytics["filters"]["all"]["none"][1] += 1
+
         day_delta = (today - click.time.date()).days
         hour_delta = (now - click.time).seconds / 3600
+
         if day_delta < 7:
-            analytics["week"]["day" + str(day_delta)][1] += 1
-        if hour_delta < 12:
-            analytics["day"]["hour" + str(hour_delta)][1] += 1
-        
-        for click_filter in click.click_filters:
-            if str(click_filter.filter_id) in analytics["filters"].keys():
-                analytics["filters"][str(click_filter.filter_id)][1] += 1
 
-    all_filters = db.session.query(ClickFilter).all()
+            for click_filter in click.click_filters:
+                    if str(click_filter.filter_id) in analytics["allfilters"]["week"].keys():
+                        analytics["allfilters"]["week"][str(click_filter.filter_id)][1] += 1
+                        analytics["allfilters"]["month"][str(click_filter.filter_id)][1] += 1
+                    elif str(click_filter.filter_id) == "volun":
+                        analytics["allfilters"]["week"]["volunteers"][1] += 1
+                        analytics["allfilters"]["month"]["volunteers"][1] += 1
+                    elif click_filter.filter_id == "":
+                        analytics["allfilters"]["week"]["none"][1] += 1
+                        analytics["allfilters"]["month"]["none"][1] += 1
 
-    for click_filter in all_filters:
-        if str(click_filter.filter_id) in analytics["allfilters"].keys():
-            analytics["allfilters"][str(click_filter.filter_id)][1] += 1
+            if click.org_id == org_id:
+
+                analytics["week"]["day" + str(day_delta)][1] += 1
+                analytics["month"]["week0"][1] += 1
+
+                for click_filter in click.click_filters:
+                    if str(click_filter.filter_id) in analytics["filters"]["week"].keys():
+                        analytics["filters"]["week"][str(click_filter.filter_id)][1] += 1
+                        analytics["filters"]["month"][str(click_filter.filter_id)][1] += 1
+                    elif str(click_filter.filter_id) == "volun":
+                        analytics["filters"]["week"]["volunteers"][1] += 1
+                        analytics["filters"]["month"]["volunteers"][1] += 1
+                    elif click_filter.filter_id == "":
+                        analytics["filters"]["week"]["none"][1] += 1
+                        analytics["filters"]["month"]["none"][1] += 1
+
+        elif day_delta < 28:
+
+            for click_filter in click.click_filters:
+                if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
+                    analytics["allfilters"]["month"][str(click_filter.filter_id)][1] += 1
+                elif str(click_filter.filter_id) == "volun":
+                    analytics["allfilters"]["month"]["volunteers"][1] += 1
+                elif click_filter.filter_id == "":
+                    analytics["allfilters"]["month"]["none"][1] += 1
+
+            if click.org_id == org_id:
+
+                analytics["month"]["week" + str((day_delta / 7) + 1)][1] += 1
+
+                for click_filter in click.click_filters:
+                    if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
+                        analytics["filters"]["month"][str(click_filter.filter_id)][1] += 1
+                    elif str(click_filter.filter_id) == "volun":
+                        analytics["filters"]["month"]["volunteers"][1] += 1
+                    elif click_filter.filter_id == "":
+                        analytics["filters"]["month"]["none"][1] += 1
+
+        if (day_delta == 0) and (hour_delta < 24):
+
+            for click_filter in click.click_filters:
+                if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
+                    analytics["allfilters"]["day"][str(click_filter.filter_id)][1] += 1
+                elif str(click_filter.filter_id) == "volun":
+                    analytics["allfilters"]["day"]["volunteers"][1] += 1
+                elif click_filter.filter_id == "":
+                    analytics["allfilters"]["day"]["none"][1] += 1
+
+            if click.org_id == org_id:
+
+                analytics["day"]["hour" + str(hour_delta)][1] += 1
+
+                for click_filter in click.click_filters:
+                    if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
+                        analytics["filters"]["day"][str(click_filter.filter_id)][1] += 1
+                    elif str(click_filter.filter_id) == "volun":
+                        analytics["filters"]["day"]["volunteers"][1] += 1
+                    elif click_filter.filter_id == "":
+                        analytics["filters"]["day"]["none"][1] += 1
 
 
-
+        # for click_filter2 in click.click_filters:
+        #     if str(click_filter2.filter_id) in analytics["allfilters"].keys():
+        #         analytics["allfilters"][str(click_filter2.filter_id)][1] += 1
+        #     elif click_filter2.filter_id == "volun":
+        #         analytics["allfilters"]["volunteers"][1] += 1
+        #     elif click_filter2.filter_id == "":
+        #         analytics["allfilters"]["none"][1] += 1
+ 
     return jsonify(analytics)
 
 

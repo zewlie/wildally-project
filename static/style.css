@@ -106,3 +106,12 @@ body {
 #myCarousel {
   width: 250px;
 }
+
+#chart-toolbar {
+  padding-left: 50px;
+  padding-bottom: 20px;
+}
+
+#pie-chart-container {
+  padding-top: 10px;
+}

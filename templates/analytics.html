@@ -8,140 +8,62 @@
   {% if session['user_id'] == 'None' %}
     <p>You need to log in to see this page!</p>
   {% else %}
+
   
-<div class="col-sm-7 col-md-8">
-<canvas id="week-chart" width="750" height="380"></canvas>
-<canvas id="day-chart" width="750" height="380"></canvas>
+<div class="col-sm-7 col-lg-8">
+    <div id='chart-toolbar' class="btn-toolbar" role="toolbar" aria-label="View Charts">
+      <div class="btn-group" role="group" aria-label="View Charts">
+        <button id="show-day" type="button" class="show-chart btn btn-default btn-success">View Today's Clicks</button>
+        <button id="show-week" type="button" class="show-chart btn btn-default">View This Week's Clicks</button>
+        <button id="show-month" type="button" class="show-chart btn btn-default">View This Month's Clicks</button>
+      </div>
+    </div>
+    <div id='line-chart-container'>
+        <canvas id="line-chart" width="750" height="380"></canvas>
+    </div>
 </div>
 
-<div class="col-sm-2 col-md-2">
-<canvas id="myChart2" width="190" height="190"></canvas>
-<canvas id="myChart3" width="190" height="190"></canvas>
+<div class="col-sm-2 col-lg-2">
+    <div id='pie-chart-container'>
+        <canvas id="filters-pie" width="190" height="190"></canvas>
+        <canvas id="all-filters-pie" width="190" height="190"></canvas>
+    </div>
 </div>
 
 
   {% endif %}
+{% endblock %}
 
+  
+{% block javascript %}
 <script src="http://www.chartjs.org/assets/Chart.js"></script>
-  <script>
+<script>
 
-// globals
+    var lineChartElement = document.getElementById('line-chart');   
+    var filtersPieElement = document.getElementById('filters-pie');
+    var allFiltersPieElement = document.getElementById('all-filters-pie');
 
-function processChart() { 
+    var lineChart, pieChart;
 
-    var weekChartElement = document.getElementById('week-chart');
-    var dayChartElement = document.getElementById('day-chart');
-
+    var monthChartLabels = [];
+    var monthChartData = [];
     var weekChartLabels = [];
     var weekChartData = [];
     var dayChartLabels = [];
     var dayChartData = [];
-    var filtersDict = {};
-    var allFiltersDict = {};
+
+    var allFiltersArrays = [];
+    var monthFiltersArrays = [];
+    var weekFiltersArrays = [];
+    var dayFiltersArrays = [];
+
+    var allAllFiltersArrays = [];
+    var monthAllFiltersArrays = [];
+    var weekAllFiltersArrays = [];
+    var dayAllFiltersArrays = [];
 
 
-    $.get('/analytics.json', function (analytics) {
+    processChart(); 
 
-
-        var week = analytics["week"];
-        var day = analytics["day"];
-        var filters = analytics["filters"];
-        var allFilters = analytics["allfilters"];
-
-        var key, dayLabel, dayClickCount;
-
-        var weekLabelArray = [];
-        var weekDataArray = [];
-
-        var dayLabelArray = [];
-        var dayDataArray = [];
-
-        for (i = 6; i > -1; i--) {
-            dayLabel = week["day" + i][0];
-            dayClickCount = week["day" + i][1];
-
-            weekLabelArray.push(dayLabel);
-            weekDataArray.push(dayClickCount);
-        }
-
-        for (i = 11; i > -1; i--) {
-            hourLabel = day["hour" + i][0];
-            hourClickCount = day["hour" + i][1];
-
-            dayLabelArray.push(hourLabel);
-            dayDataArray.push(hourClickCount);
-        }
-
-        weekChartLabels = weekLabelArray;
-        weekChartData = weekDataArray;
-        dayChartLabels = dayLabelArray;
-        dayChartData = dayDataArray;
-
-    });
-
-    setTimeout(function(){ generateLineChart(weekChartElement, weekChartLabels, weekChartData); }, 500);
-    setTimeout(function(){ generateLineChart(dayChartElement, dayChartLabels, dayChartData); }, 500);
-
-}
-
-function generateLineChart(element, labelArray, dataArray) {
-    // data for 1st chart: clicks vs. area searches
-var data = {
-    labels: labelArray,
-    datasets: [
-        {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: dataArray,
-        }
-    ]
-};
-
-// 1st chart: clicks vs. area searches
-var ctx = element.getContext("2d");
-var myLineChart = new Chart(ctx).Line(data);
-}
-
-function generatePieChart(element, labelArray, dataArray) {
-    // data for 2nd chart: pie comparison of filters
-console.log("element: " + element);
-
-var data = [
-    {
-        value: 300,
-        color: "rgba(220,220,220,1)",
-        highlight: "rgba(220,220,220,1)",
-        label: "Red"
-    },
-    {
-        value: 50,
-        color: "rgba(151,187,205,0.2)",
-        highlight: "rgba(151,187,205,0.2)",
-        label: "Green"
-    },
-    {
-        value: 100,
-        color: "rgba(151,187,205,1)",
-        highlight: "rgba(151,187,205,1)",
-        label: "Yellow"
-    }
-]
-
-// 2nd chart: pie comparison of filters
-var ctx = element.getContext("2d");
-var myPieChart1 = new Chart(ctx).Pie(data, {animateScale: true});
-}
-
-processChart();
-
-
-
-  </script>
-
-
-  {% endblock %}
+</script>
+{% endblock %}

@@ -237,14 +237,15 @@ function processChart() {
         }
 
         for (key in filters) {
-            for (innerKey in filters[key]) {
-                (window[key + "FiltersArrays"]).push([innerKey, filters[key][innerKey][0], filters[key][innerKey][1]]);
+            for (innerKey in key) {
+                (window[key + "FiltersArrays"]).push([filters[key], filters[key], filters[key]]);
+                console.log(key + " " + innerKey + " " + filters[key] + " " + filters[key][innerKey]);
             }
         }
 
         for (key in allFilters) {
-            for (innerKey in allFilters[key]) {
-                (window[key + "AllFiltersArrays"]).push([innerKey, allFilters[key][innerKey][0], allFilters[key][innerKey][1]]);
+            for (innerKey in key) {
+
             }
         }
 
@@ -275,7 +276,7 @@ function generateLineChart(element, labelArray, dataArray) {
         };
 
     var ctx = element.getContext("2d");
-    lineChart = new Chart(ctx).Line(data);
+    var myLineChart = new Chart(ctx).Line(data);
 }
 
 function generatePieChart(element, labelDataArrays) {
@@ -310,12 +311,10 @@ function generatePieChart(element, labelDataArrays) {
         }
 
     var ctx = element.getContext("2d");
-    pieChart = new Chart(ctx).Pie(data, {animateScale: true});
+    var myPieChart = new Chart(ctx).Pie(data, {animateScale: true});
 }
 
 function showChart(evt) {
-    lineChart.destroy();
-    pieChart.destroy();
 
     var buttonId = "#" + this.id;
     var chartId = this.id.replace('show-','');
@@ -324,9 +323,6 @@ function showChart(evt) {
     $(buttonId).addClass('btn-success');
 
     generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
-    generatePieChart(filtersPieElement, window[chartId + "FiltersArrays"]);
-    generatePieChart(allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
-
 }
 
 
