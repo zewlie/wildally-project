@@ -3,6 +3,20 @@
 {% block title %}Register for WildAlly
 {% endblock %}
 
+{% block sidebar %}
+
+        <ul class="nav nav-sidebar">
+
+            <li><a href="/settings">Account Settings</a></li>
+
+            <li><a href="/photos">Photos</a></li>
+
+            <li><a href="/analytics">Analytics</a></li>
+
+        </ul>
+
+{% endblock %}
+
   {% block content %} 
 
   {% if session['user_id'] == 'None' %}
@@ -56,21 +70,39 @@
 </form>
 
 <script>
-// function uploadPhoto(evt) {
-//     evt.preventDefault();
+function uploadPhoto(evt) {
 
-//     var myfile = $('#photo').files[0];
-//     console.log(myfile);
-//     var formData = new FormData();
+    evt.preventDefault();
 
-//     formData.append('file', myfile);
+    var photoElement = document.getElementById('photo');
+    var photoFile = photoElement.files[0];
+    var formData = new FormData();
 
-//       $.post('/photos', formData, function(){
-//         console.log("woo");
-//       });
-// }
+    // var sessionID = 8;
+    // formData.append('id', sessionID);
 
-// $('#photo-form').on('submit',uploadPhoto);
+    // formData.append("file", photoFile);
+
+
+    $.ajax({
+            type: 'POST',
+            url: '/_upload-photo',
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            async: false,
+            success: function(data) {
+                console.log('Success!');
+            },
+        });
+
+      // $.post('/photos', formData, function(){
+
+      // });
+}
+
+$('#photo-form').on('submit',uploadPhoto);
 
 </script>
 

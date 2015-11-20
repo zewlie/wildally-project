@@ -6,6 +6,7 @@
   <link rel="stylesheet" type="text/css" href="static/style.css">
   <link rel="shortcut icon" href="/static/img/favicon.ico" />
   <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
 </head>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -16,7 +17,7 @@
     </div>
      <ul class="nav navbar-nav navbar-right">
       {% if session['user_id'] %}
-          <li><a href="/settings">Settings</a></li>
+          <li><a href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       {% else %}
           <li><a href="/new">Register</a><li>

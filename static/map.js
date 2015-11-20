@@ -195,7 +195,7 @@ console.log(animalTypes);
 
   function markerClick(marker) {
       google.maps.event.addListener(marker, 'click', function () {
-          sendClickToCelery(marker);
+          sendClick(marker);
           map.panTo(marker.getPosition());
       });
   }
@@ -329,7 +329,7 @@ function showMarkerWithAnimation(marker){
     console.log("SUCCESS");
   }
 
-  function sendClickToCelery(marker) {
+  function sendClick(marker) {
     console.log("WIN");
     var clickedOrg = marker.orgId;
     console.log(clickedOrg);
@@ -350,24 +350,11 @@ function showMarkerWithAnimation(marker){
         'currentFilters': currentFilters
       }, returnClickSuccess);
 
-    // var clickJSON = {
-    //     'orgId': clickedOrg,
-    //     'currentFilters': currentFilters
-    //   };
-
-        // $.ajax({
-        //   type: 'POST',
-        //   url: '/_track-click',
-        //   data: clickJSON,
-        //   // dataType: 'json'
-        // });
-
   }
 
 // Listen for changes to the filters / address bar
     $('.map-filter-cb').on("click", updateFilters);
     $('#submit-address').on("click", updateMapCenter);
-    // $("img[src='static/img/wildally_marker_2.png#5']").on("click", sendClickToCelery);
     // autocomplete.addListener('place_changed', onPlaceChanged);
 
 }

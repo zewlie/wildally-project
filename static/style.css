@@ -108,10 +108,10 @@ body {
 }
 
 #chart-toolbar {
-  padding-left: 50px;
+  display: inline;
+  padding-left: 100px;
   padding-bottom: 20px;
 }
 
 #pie-chart-container {
-  padding-top: 10px;
 }

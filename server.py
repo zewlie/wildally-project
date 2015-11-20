@@ -3,7 +3,10 @@
 from jinja2 import StrictUndefined
 from datetime import datetime, date, timedelta
 from math import floor
+from random import randint
+from time import sleep
 
+import json
 import os
 from flask import Flask, Markup, render_template, redirect, request, flash, session, jsonify, url_for, send_from_directory
 from flask_debugtoolbar import DebugToolbarExtension
@@ -13,19 +16,22 @@ from werkzeug import secure_filename
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, Click, ClickFilter, connect_to_db, db
 
+# Clicks for celery to process
+GATHERED_CLICKS = []
+
 # File upload settings
 UPLOAD_FOLDER = './static/user/'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'txt'])
 
 app = Flask(__name__)
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
+# app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
@@ -37,10 +43,33 @@ app.jinja_env.undefined = StrictUndefined
 # Functions not associated with particular routes
 #################################################################################
 
-##################################################
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+def list_of_org_objects():
+    orgs = db.session.query(Org).all()
+    return orgs
 
-# @celery.task
+def list_of_animal_objects():
+    animals = db.session.query(Animal).all()
+    return animals
+
+def list_of_click_objects():
+    clicks = db.session.query(Click).all()
+    return clicks
+
+def list_of_click_filter_objects():
+    click_filters = db.session.query(ClickFilter).all()
+
+def load_click_info_from_db():
+    orgs = list_of_org_objects()
+    animals = list_of_animal_objects()
+    clicks = list_of_click_objects()
+    click_filters = list_of_click_filter_objects()
+
+    return (orgs, animals, clicks, click_filters)
+
 def gather_clicks(org_id, current_filters):
     """ """
 
@@ -60,6 +89,50 @@ def gather_clicks(org_id, current_filters):
         db.session.commit()
 
     return
+
+# def insert_clicks_into_db(gathered_clicks_list):
+#     """ """
+
+#     for single_click in gathered_clicks_list:
+
+#         click_type_id, click_org_id, click_time, click_filters = single_click
+
+#         click = Click(type_id=click_type_id,
+#                     org_id=click_org_id,
+#                     time=click_time)
+
+#         db.session.add(click)
+#         db.session.flush()
+#         db.session.commit()
+
+#         if current_filters:
+#             for each in current_filters:
+#                 click_filter = ClickFilter(click_id=click.id,
+#                                            filter_id=each)
+#                 db.session.add(click_filter)
+#             db.session.commit()
+
+#     return
+
+# def gather_clicks(org_id, current_filters):
+#     """ """
+#     global GATHERED_CLICKS
+
+#     click_type_id = 1,
+#     click_org_id = org_id,
+#     click_time = datetime.now()
+#     click_filters = []
+
+#     if current_filters:
+#         for each in current_filters:
+#             click_filters.append(each)
+
+#     GATHERED_CLICKS.append([click_type_id, click_org_id, click_time, click_filters])
+#     print GATHERED_CLICKS
+
+#     return
+
+##################################################
 
 
 @app.route('/_track-click', methods=['GET', 'POST'])
@@ -339,43 +412,45 @@ def uploaded_photo(filename):
 def manage_photos():
     photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
 
-    def allowed_file(filename):
-        return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    file_count = 0
+    if os.path.lexists(photo_dir):
+        for root, dirs, filenames in os.walk(photo_dir):
+            root = root
+            filenames = filenames
 
-    if request.method == 'POST':
-        file = request.files['photo']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            if os.path.lexists(photo_dir) == False:
-                os.makedirs(photo_dir)
-
-            file.save(os.path.join(photo_dir, filename))
-            # return redirect(url_for('uploaded_photo',
-            #                         filename=filename))
-            return redirect('/photos')
-        return jsonify({'success': 'no'})
-
+            for filename in filenames:
+                file_count += 1
     else:
-        file_count = 0
-        if os.path.lexists(photo_dir):
-            for root, dirs, filenames in os.walk(photo_dir):
-                root = root
-                filenames = filenames
+        root = None
+        filenames = None
 
-                for filename in filenames:
-                    file_count += 1
-        else:
-            root = None
-            filenames = None
+    return render_template('photos.html', file_count=file_count, root=root, filenames=filenames)
 
-        return render_template('photos.html', file_count=file_count, root=root, filenames=filenames)
+@app.route('/_upload-photo', methods=['POST'])
+def upload_photo():
+    print "WOOP"
+    photo_file = request.filename
+    print photo_file
+    print "WOOP 2"
+    if photo_file and allowed_file(photo_file.filename):
+        print "WOOP3"
+        filename = secure_filename(photo_file.filename)
+        print "WOOP4"
+        if os.path.lexists(photo_dir) == False:
+            os.makedirs(photo_dir)
+
+        photo_file.save(os.path.join(photo_dir, filename))
+        # return redirect(url_for('uploaded_photo',
+        #                         filename=filename))
+        return redirect('/photos')
+    return jsonify({'success': 'no'})
 
 
 @app.route('/analytics')
 def show_analytics():
 
     return render_template('analytics.html')
+
 
 @app.route('/orgs.json')
 def org_info():
@@ -441,174 +516,19 @@ def animal_info():
 
 @app.route('/analytics.json')
 def analytics_json():
-    """JSON information about the logged-in org-user's analytics"""
 
-    now = datetime.now()
-    today = now.date()
+    org_id = session['user_id']
 
-    previous_weeks = 3
-    previous_days = 6
-    previous_hours = 23
+    with open(os.path.join(app.config['UPLOAD_FOLDER'] + "analytics/analytics_" + str(org_id) + ".txt")) as analytics_json:
+        json_content = analytics_json.read().replace("[u'", '["').replace("'", '"')
 
-    analytics = {
-                 "month": {},
-                 "week": {},
-                 "day": {},
-                 "filters": { "all": {},
-                              "day": {},
-                              "week": {},
-                              "month": {}, 
-                              },
-                 "allfilters": { "all": {},
-                                 "day": {},
-                                 "week": {},
-                                 "month": {}, 
-                              },
-                 }
+    analytics_json.close()
 
-    animals = db.session.query(Animal).all()
-    for animal in animals:
-        for key in analytics["filters"]:
-            analytics["filters"][key][str(animal.id)] = [animal.name, 0]
-            analytics["filters"][key]["volunteers"] = ["volunteers", 0]
-            analytics["filters"][key]["none"] = ["none", 0]
-
-            analytics["allfilters"][key][str(animal.id)] = [animal.name, 0]
-            analytics["allfilters"][key]["volunteers"] = ["volunteers", 0]
-            analytics["allfilters"][key]["none"] = ["none", 0]
+    return json_content
 
 
-    while previous_weeks >= 0:
-        week_end = today - timedelta(days=(6 + (previous_weeks * 7)))
-        week_start = week_end + timedelta(days=6)
-        analytics["month"]["week" + str(previous_weeks)] = [date.strftime(week_start, "%m/%d") + " - " + date.strftime(week_end, "%m/%d"), 0]
-        previous_weeks -= 1
-
-    while previous_days >= 0:
-        day = today - timedelta(days=previous_days)
-        analytics["week"]["day" + str(previous_days)] = [date.strftime(day, "%m/%d"), 0]
-        # analytics["week"].append(["day" + str(previous_days), date.strftime(day, "%m/%d"), 0])
-        previous_days -= 1
-
-    while previous_hours >= 0:
-        hour_start = now - timedelta(hours=previous_hours)
-        hour_end = hour_start + timedelta(hours=1)
-        analytics["day"]["hour" + str(previous_hours)] = [date.strftime(hour_start, "%I %p").lstrip("0") + " - " + date.strftime(hour_end, "%I %p").lstrip("0"), 0]
-        previous_hours -= 1
-
-    user_id = session['user_id']
-    org = db.session.query(Org).filter(Org.user_id == user_id).one()
-    org_id = org.id
-    clicks = db.session.query(Click).all()
-
-    for click in clicks:
-
-        for click_filter in click.click_filters:
-            if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
-                analytics["allfilters"]["all"][str(click_filter.filter_id)][1] += 1
-            elif str(click_filter.filter_id) == "volun":
-                analytics["allfilters"]["all"]["volunteers"][1] += 1
-            elif click_filter.filter_id == "":
-                analytics["allfilters"]["all"]["none"][1] += 1
-
-        if click.org_id == org_id:
-
-            for click_filter in click.click_filters:
-                if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
-                    analytics["filters"]["all"][str(click_filter.filter_id)][1] += 1
-                elif str(click_filter.filter_id) == "volun":
-                    analytics["filters"]["all"]["volunteers"][1] += 1
-                elif click_filter.filter_id == "":
-                    analytics["filters"]["all"]["none"][1] += 1
-
-        day_delta = (today - click.time.date()).days
-        hour_delta = (now - click.time).seconds / 3600
-
-        if day_delta < 7:
-
-            for click_filter in click.click_filters:
-                    if str(click_filter.filter_id) in analytics["allfilters"]["week"].keys():
-                        analytics["allfilters"]["week"][str(click_filter.filter_id)][1] += 1
-                        analytics["allfilters"]["month"][str(click_filter.filter_id)][1] += 1
-                    elif str(click_filter.filter_id) == "volun":
-                        analytics["allfilters"]["week"]["volunteers"][1] += 1
-                        analytics["allfilters"]["month"]["volunteers"][1] += 1
-                    elif click_filter.filter_id == "":
-                        analytics["allfilters"]["week"]["none"][1] += 1
-                        analytics["allfilters"]["month"]["none"][1] += 1
-
-            if click.org_id == org_id:
-
-                analytics["week"]["day" + str(day_delta)][1] += 1
-                analytics["month"]["week0"][1] += 1
-
-                for click_filter in click.click_filters:
-                    if str(click_filter.filter_id) in analytics["filters"]["week"].keys():
-                        analytics["filters"]["week"][str(click_filter.filter_id)][1] += 1
-                        analytics["filters"]["month"][str(click_filter.filter_id)][1] += 1
-                    elif str(click_filter.filter_id) == "volun":
-                        analytics["filters"]["week"]["volunteers"][1] += 1
-                        analytics["filters"]["month"]["volunteers"][1] += 1
-                    elif click_filter.filter_id == "":
-                        analytics["filters"]["week"]["none"][1] += 1
-                        analytics["filters"]["month"]["none"][1] += 1
-
-        elif day_delta < 28:
-
-            for click_filter in click.click_filters:
-                if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
-                    analytics["allfilters"]["month"][str(click_filter.filter_id)][1] += 1
-                elif str(click_filter.filter_id) == "volun":
-                    analytics["allfilters"]["month"]["volunteers"][1] += 1
-                elif click_filter.filter_id == "":
-                    analytics["allfilters"]["month"]["none"][1] += 1
-
-            if click.org_id == org_id:
-
-                analytics["month"]["week" + str((day_delta / 7) + 1)][1] += 1
-
-                for click_filter in click.click_filters:
-                    if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
-                        analytics["filters"]["month"][str(click_filter.filter_id)][1] += 1
-                    elif str(click_filter.filter_id) == "volun":
-                        analytics["filters"]["month"]["volunteers"][1] += 1
-                    elif click_filter.filter_id == "":
-                        analytics["filters"]["month"]["none"][1] += 1
-
-        if (day_delta == 0) and (hour_delta < 24):
-
-            for click_filter in click.click_filters:
-                if str(click_filter.filter_id) in analytics["allfilters"]["month"].keys():
-                    analytics["allfilters"]["day"][str(click_filter.filter_id)][1] += 1
-                elif str(click_filter.filter_id) == "volun":
-                    analytics["allfilters"]["day"]["volunteers"][1] += 1
-                elif click_filter.filter_id == "":
-                    analytics["allfilters"]["day"]["none"][1] += 1
-
-            if click.org_id == org_id:
-
-                analytics["day"]["hour" + str(hour_delta)][1] += 1
-
-                for click_filter in click.click_filters:
-                    if str(click_filter.filter_id) in analytics["filters"]["month"].keys():
-                        analytics["filters"]["day"][str(click_filter.filter_id)][1] += 1
-                    elif str(click_filter.filter_id) == "volun":
-                        analytics["filters"]["day"]["volunteers"][1] += 1
-                    elif click_filter.filter_id == "":
-                        analytics["filters"]["day"]["none"][1] += 1
-
-
-        # for click_filter2 in click.click_filters:
-        #     if str(click_filter2.filter_id) in analytics["allfilters"].keys():
-        #         analytics["allfilters"][str(click_filter2.filter_id)][1] += 1
-        #     elif click_filter2.filter_id == "volun":
-        #         analytics["allfilters"]["volunteers"][1] += 1
-        #     elif click_filter2.filter_id == "":
-        #         analytics["allfilters"]["none"][1] += 1
- 
-    return jsonify(analytics)
-
-
+celery = Celery(app)
+celery.config_from_object('celeryconfig')
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point

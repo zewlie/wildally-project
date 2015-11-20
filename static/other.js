@@ -200,15 +200,18 @@ function uploadPhoto(evt) {
         });
     }
 
+
 function processChart() {
 
     $.get('/analytics.json', function (analytics) {
 
-        var month = analytics["month"];
-        var week = analytics["week"];
-        var day = analytics["day"];
-        var filters = analytics["filters"];
-        var allFilters = analytics["allfilters"];
+        var jsonWorked = JSON.parse(analytics);
+
+        var month = jsonWorked["month"];
+        var week = jsonWorked["week"];
+        var day = jsonWorked["day"];
+        var filters = jsonWorked["filters"];
+        var allFilters = jsonWorked["allfilters"];
 
         var key, innerKey, weekLabel, weekClickCount, dayLabel, dayClickCount, hourLabel, hourClickCount;
 
@@ -280,6 +283,8 @@ function generateLineChart(element, labelArray, dataArray) {
 
 function generatePieChart(element, labelDataArrays) {
 
+    // $('#pie-chart-container').html('');
+
     var pieColors = { "1": ["#9C9C9C", "#C9C9C9"],
                       "2": ["#EAAB59", "#F2CD9D"],
                       "3": ["#D95757", "#F09999"],
@@ -295,6 +300,8 @@ function generatePieChart(element, labelDataArrays) {
                      };
     var data = [];
     var pieSlice;
+
+    // $('#pie-chart-container').html('<canvas id="filters-pie" width="190" height="190"></canvas><canvas id="all-filters-pie" width="190" height="190"></canvas>');
 
     for (i = 0; i < labelDataArrays.length; i++) {
         console.log(String(labelDataArrays[i][0]));
@@ -316,6 +323,14 @@ function generatePieChart(element, labelDataArrays) {
 function showChart(evt) {
     lineChart.destroy();
     pieChart.destroy();
+
+    // $('#line-chart').remove();
+    // $('#filters-pie').remove();
+    // $('#all-filters-pie').remove();
+
+    // $('#line-chart').append('<canvas id="results-graph"><canvas>');
+    // $('#filters-pie').append('<canvas id="results-graph"><canvas>');
+    // $('#all-filters-pie').append('<canvas id="results-graph"><canvas>');
 
     var buttonId = "#" + this.id;
     var chartId = this.id.replace('show-','');

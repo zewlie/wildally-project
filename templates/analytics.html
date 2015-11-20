@@ -3,6 +3,20 @@
 {% block title %}Register for WildAlly
 {% endblock %}
 
+{% block sidebar %}
+
+        <ul class="nav nav-sidebar">
+
+            <li><a href="/settings">Account Settings</a></li>
+
+            <li><a href="/photos">Photos</a></li>
+
+            <li><a href="/analytics">Analytics</a></li>
+
+        </ul>
+
+{% endblock %}
+
   {% block content %} 
 
   {% if session['user_id'] == 'None' %}
@@ -11,6 +25,7 @@
 
   
 <div class="col-sm-7 col-lg-8">
+    <center><h3>Your Marker's Clicks Over Time</h3></center>
     <div id='chart-toolbar' class="btn-toolbar" role="toolbar" aria-label="View Charts">
       <div class="btn-group" role="group" aria-label="View Charts">
         <button id="show-day" type="button" class="show-chart btn btn-default btn-success">View Today's Clicks</button>
@@ -25,8 +40,14 @@
 
 <div class="col-sm-2 col-lg-2">
     <div id='pie-chart-container'>
+        <center>
+            <h3>Filters</h3>
+            <h4>Your Marker's Clicks</h4>
+        </center>
         <canvas id="filters-pie" width="190" height="190"></canvas>
+        <center><h4>All Wildally Clicks</h4></center>
         <canvas id="all-filters-pie" width="190" height="190"></canvas>
+        <div id='filters-legend'></div>
     </div>
 </div>
 
@@ -36,7 +57,9 @@
 
   
 {% block javascript %}
-<script src="http://www.chartjs.org/assets/Chart.js"></script>
+<script src="/static/js/numeral/min/numeral.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+<script src="/static/js/chart/Chart.js"></script>
 <script>
 
     var lineChartElement = document.getElementById('line-chart');   
@@ -63,7 +86,7 @@
     var dayAllFiltersArrays = [];
 
 
-    processChart(); 
+    processChart();
 
 </script>
 {% endblock %}
