@@ -5,6 +5,7 @@ from datetime import datetime, date, timedelta
 from math import floor
 from random import randint
 from time import sleep
+from PIL import Image
 
 import json
 import os
@@ -22,6 +23,8 @@ GATHERED_CLICKS = []
 # File upload settings
 UPLOAD_FOLDER = './static/user/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'txt'])
+THUMB_WIDTH = 200
+THUMB_HEIGHT = 175
 
 app = Flask(__name__)
 # app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
@@ -42,6 +45,26 @@ app.jinja_env.undefined = StrictUndefined
 
 # Functions not associated with particular routes
 #################################################################################
+
+def generate_thumb(filename, dimensions_tuple):
+    thumb_dir = app.config['UPLOAD_FOLDER'] + 'thumb/' + str(session['user_id']) + '/'
+
+    loaded_image = Image.open(app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/' + filename)
+    loaded_image.load()
+
+    cropped_image = loaded_image.crop(dimensions_tuple)
+    thumb = cropped_image.resize((THUMB_WIDTH, THUMB_HEIGHT), Image.ANTIALIAS)
+
+    if os.path.lexists(thumb_dir) == False:
+            os.makedirs(thumb_dir)
+
+    thumb.save(os.path.join(thumb_dir, filename))
+
+def grab_image_dimensions(filename):
+    loaded_image = Image.open(app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/' + filename)
+    loaded_image.load()
+
+    return loaded_image.size
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -343,7 +366,6 @@ def update_settings():
                             'password'],
                   'org': ['org-name',
                         'ein',
-                        'show_address',
                         'desc',
                         'phone',
                         'org-email',
@@ -382,12 +404,13 @@ def update_settings():
     # TODO: this is missing a failure check.
     elif setting_name == 'address':
         org = db.session.query(Org).filter(Org.user_id == user_id).first()
-        address1, address2, city, state, zipcode = setting_value.split('+')
+        address1, address2, city, state, zipcode, show_address = setting_value.split('+')
         setattr(org, 'address1', address1)
         setattr(org, 'address2', address2)
         setattr(org, 'city', city)
         setattr(org, 'state', state)
         setattr(org, 'zipcode', zipcode)
+        setattr(org, 'show_address', show_address)
         db.session.commit()
 
         coords = org.make_geocode()
@@ -403,18 +426,18 @@ def update_settings():
     return jsonify({'success': 'no'})
 
 
-@app.route('/uploads/<filename>')
-def uploaded_photo(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img',filename)
+# @app.route('/uploads/<filename>')
+# def uploaded_photo(filename):
+#     return send_from_directory(app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img',filename)
 
 
 @app.route('/photos', methods=['GET', 'POST'])
 def manage_photos():
-    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
+    thumb_dir = app.config['UPLOAD_FOLDER'] + 'thumb/' + str(session['user_id']) + '/'
 
     file_count = 0
-    if os.path.lexists(photo_dir):
-        for root, dirs, filenames in os.walk(photo_dir):
+    if os.path.lexists(thumb_dir):
+        for root, dirs, filenames in os.walk(thumb_dir):
             root = root
             filenames = filenames
 
@@ -428,9 +451,9 @@ def manage_photos():
 
 @app.route('/_upload-photo', methods=['POST'])
 def upload_photo():
+    photo_dir = app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/'
     print "WOOP"
-    photo_file = request.filename
-    print photo_file
+    photo_file = request.files['photo']
     print "WOOP 2"
     if photo_file and allowed_file(photo_file.filename):
         print "WOOP3"
@@ -440,6 +463,37 @@ def upload_photo():
             os.makedirs(photo_dir)
 
         photo_file.save(os.path.join(photo_dir, filename))
+
+        image_dimensions = grab_image_dimensions(filename)
+        print image_dimensions
+
+        image_width, image_height = image_dimensions
+
+        width_factor = float(image_width) / THUMB_WIDTH
+        height_factor = float(image_height) / THUMB_HEIGHT
+
+        if width_factor > height_factor:
+            excess_width = int(((image_width / height_factor) - THUMB_WIDTH) * height_factor)
+            crop_right = image_width - (excess_width / 2)
+            crop_left = excess_width / 2
+
+            crop_thumb = (crop_left, 0, crop_right, image_height)\
+
+            thumb = generate_thumb(filename, crop_thumb)
+
+        elif height_factor > width_factor:
+            excess_height = int(((image_height / width_factor) - THUMB_HEIGHT) * width_factor)
+            crop_bottom = image_height - (excess_height / 2)
+            crop_top = excess_width / 2
+
+            crop_thumb = (0, crop_top, image_width, crop_bottom)
+
+            thumb = generate_thumb(filename, crop_thumb)
+
+        elif height_factor == width_factor:
+            pass
+
+        print width_factor, height_factor
         # return redirect(url_for('uploaded_photo',
         #                         filename=filename))
         return redirect('/photos')
@@ -456,7 +510,7 @@ def show_analytics():
 def org_info():
     """JSON information about orgs."""
 
-    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
+    photo_dir = app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/'
 
     orgs = {
         org.id: {
@@ -482,7 +536,7 @@ def org_info():
 
     rows = Org.query.all()
     for org in rows:
-        photo_dir = app.config['UPLOAD_FOLDER'] + str(org.user_id) + '/img'
+        photo_dir = app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/'
         if os.path.lexists(photo_dir):
             for root, dirs, filenames in os.walk(photo_dir):
                 orgs[org.id]["photoRoot"]= root
@@ -503,7 +557,7 @@ def org_info():
 def animal_info():
     """JSON information about animal types."""
 
-    photo_dir = app.config['UPLOAD_FOLDER'] + str(session['user_id']) + '/img'
+    photo_dir = app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/'
 
     animals = {
         animal.id: {

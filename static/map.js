@@ -55,7 +55,7 @@ function initMap() {
 
 // Create info window
 var infoWindow = new google.maps.InfoWindow({
-      width: 200
+      width: 500
   });
 
 var markerArray = [];
@@ -72,12 +72,13 @@ console.log(animalTypes);
   // Grab marker JSON with AJAX
   $.get('/orgs.json', function (orgs) {
 
-      var org, marker, html, printAddress, orgPhoto, orgAnimals;
+      var org, marker, html, printAddress, orgPhoto, windowClass, orgAnimals;
 
 
       for (var key in orgs) {
           org = orgs[key];
           orgPhoto = '<span></span>';
+          windowClass = 'single-col-window';
           orgAnimals = ' ';
 
           var markerIcon = 'generic';
@@ -106,15 +107,19 @@ console.log(animalTypes);
           // Add the new marker to the markerArray
           markerArray.push(marker);
 
-          if (org.photoFilenames) {
-              orgPhoto = '<img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '><br />';
+          if (org.photoFilenames !== null) {
+              windowClass = 'double-col-window';
+              orgPhoto = '<div class="window-left"><img class="infowindow-photo" src=' +
+              org.photoRoot + '/' + org.photoFilenames[0] + '></div>';
           }
 
-          if (org.photoFilenames){
+          if (org.photoFilenames !== null){
           if (org.photoFilenames.length == 1) {
-              orgPhoto = '<img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '><br />';
+              windowClass = 'double-col-window';
+              orgPhoto = '<div class="window-left"><img class="infowindow-photo" src=' + org.photoRoot + '/' + org.photoFilenames[0] + '></div>';
           } else {
-              var carousel = '<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">';
+              windowClass = 'double-col-window';
+              var carousel = '<div class="window-left"><div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">';
               var indicators = '<ol class="carousel-indicators">' +
                                 '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>';
               var slides = '<div class="carousel-inner" role="listbox">' +
@@ -138,7 +143,7 @@ console.log(animalTypes);
               carousel = carousel.concat(indicators);
               carousel = carousel.concat(slides);
               carousel = carousel.concat(controls);
-              carousel = carousel.concat('</div>');
+              carousel = carousel.concat('</div></div>');
 
               orgPhoto = carousel;
           }
@@ -161,8 +166,9 @@ console.log(animalTypes);
 
           // Define the content of the infoWindow
           html = (
-              '<div class="window-content">' +
+              '<div class="window-content ' + windowClass + '">' +
                   orgPhoto +
+              '<div class="window-right">' +
                   '<h3>' + org.orgName + '</h3>' +
                   '<h5>' + org.phone + '</h5>' +
                   '<p>' + printAddress +
@@ -170,7 +176,9 @@ console.log(animalTypes);
                         org.state + ' ' +
                         org.zipcode +
                   '</p>' + '<p>' + org.desc + '</p>' +
-                  '<h5>Animals accepted</h5><ul>' + orgAnimals + '</ul></div>');
+                  '<h5>Animals accepted</h5><ul>' + orgAnimals + '</ul>' +
+              '</div>' +
+              '</div>');
 
           // Inside the loop we call bindInfoWindow passing it the marker,
           // map, infoWindow and contentString

@@ -181,7 +181,27 @@
         <input type='text' id='zipcode' name='zipcode' class='address-field temp-hidden'>
     <br />
 
+<!-- <label for='is-org' class='org-field'> -->
+        <span class='address-field temp-hidden'>Do you want your organization's full address to show in search results?<br /></span>
+        {% if show_address == 1 %}
+        <span id="current-show_address" class="current-address"><i>Your full address <b>is</b> shown on the map.</i></span>
+        <input type='radio' class='address-field temp-hidden' name='show_address' value='1' checked='checked'> 
+            <span class='address-field temp-hidden'>Yes</span>
+        <input type='radio' class='address-field temp-hidden' name='show_address' value='0'> 
+            <span class='address-field temp-hidden'>No, show only my city</span>
+        {% else %}
+        <span id="current-show_address" class="current-address"><i>Your full address <b>is not</b> shown on the map.</i></span>
+        <input type='radio' class='address-field temp-hidden' name='show_address' value='1'> 
+            <span class='address-field temp-hidden'>Yes</span>
+        <input type='radio' class='address-field temp-hidden' name='show_address' value='0' checked='checked'> 
+            <span class='address-field temp-hidden'>No, show only my city</span>
+        {% endif %}
+
+        <span id='show_address-success'></span>
+        <br />
+
     <button type="button" id="button-address" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
+
 
 </label>
 
@@ -221,21 +241,6 @@
         <span id='website-success'></span>
     </label><br />
 
-<h4>Preferences</h4>
-
-    <label for='is-org' class='org-field'>Do you want your organization's full address to show in search results?<br />
-        {% if show_address == 1 %}
-        <input type='radio' name='show_address' value='1' checked='checked'> Yes
-        <input type='radio' name='show_address' value='0'> No, show only my city
-        {% else %}
-        <input type='radio' name='show_address' value='1'> Yes
-        <input type='radio' name='show_address' value='0' checked='checked'> No, show only my city
-
-        <button type="button" id="click-to-save-radio button-show_address" class="btn btn-success btn-xs">Save</button>
-
-        <span id='show_address-success'></span>
-        {% endif %}
-    </label><br />
 
     {% endif %}
 

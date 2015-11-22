@@ -94,8 +94,7 @@ body {
 }
 
 .carousel-inner .item {
-  height: 200px;
-  width: 250px;
+  width: 200px;
   background-color: #000000;
 }
 
@@ -104,14 +103,29 @@ body {
 }
 
 #myCarousel {
-  width: 250px;
+  width: 200px;
 }
 
 #chart-toolbar {
   display: inline;
-  padding-left: 100px;
   padding-bottom: 20px;
 }
 
-#pie-chart-container {
+.double-col-window {
+  width: 500px;
+}
+
+.single-col-window {
+  width: 270px;
+}
+.window-left {
+  display: inline-block;
+  padding-right: 30px;
+  width: 230px;
+}
+
+.window-right {
+  display: inline-block;
+  width: 270px;
+  padding-left: 10px;
 }

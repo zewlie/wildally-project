@@ -59,7 +59,8 @@ function saveOneField(evt) {
                             $('#address2').val() + '+' +
                             $('#city').val() + '+' +
                             $('#state').val() + '+' +
-                            $('#zipcode').val();
+                            $('#zipcode').val() + '+' +
+                            $('input[name=show_address]').val();
         successSpanId = '#address-success';
 
         $('#current-address1').text($('#address1').val());
@@ -67,6 +68,7 @@ function saveOneField(evt) {
         $('#current-city').text($('#city').val());
         $('#current-state').text($('#state').val());
         $('#current-zipcode').text($('#zipcode').val());
+        $('#current-show_address').html('<i>Location preferences updated.</i>');
 
         $('.address-field').addClass("temp-hidden");
         $('#button-address').addClass("temp-hidden");

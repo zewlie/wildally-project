@@ -63,46 +63,46 @@
 {% endif %}
 
 <p>Upload a photo!</p>
-<form action="" method="POST" id="photo-form" enctype="multipart/form-data">
+<form action="/_upload-photo" method="POST" id="photo-form" enctype="multipart/form-data">
       <input type="file" name="photo" id="photo">
       <!-- <button type="button" id="upload-photo" class="btn btn-success btn-xs">Upload Photo</button> -->
       <input type="submit" value="Upload Photo">
 </form>
 
 <script>
-function uploadPhoto(evt) {
+// function uploadPhoto(evt) {
 
-    evt.preventDefault();
+//     evt.preventDefault();
 
-    var photoElement = document.getElementById('photo');
-    var photoFile = photoElement.files[0];
-    var formData = new FormData();
+//     var photoElement = document.getElementById('photo');
+//     var photoFile = photoElement.files[0];
+//     var formData = new FormData();
 
-    // var sessionID = 8;
-    // formData.append('id', sessionID);
+//     // var sessionID = 8;
+//     // formData.append('id', sessionID);
 
-    // formData.append("file", photoFile);
+//     // formData.append("file", photoFile);
 
 
-    $.ajax({
-            type: 'POST',
-            url: '/_upload-photo',
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            async: false,
-            success: function(data) {
-                console.log('Success!');
-            },
-        });
+//     $.ajax({
+//             type: 'POST',
+//             url: '/_upload-photo',
+//             data: formData,
+//             contentType: false,
+//             cache: false,
+//             processData: false,
+//             async: false,
+//             success: function(data) {
+//                 console.log('Success!');
+//             },
+//         });
 
-      // $.post('/photos', formData, function(){
+//       // $.post('/photos', formData, function(){
 
-      // });
-}
+//       // });
+// }
 
-$('#photo-form').on('submit',uploadPhoto);
+// $('#photo-form').on('submit',uploadPhoto);
 
 </script>
 
