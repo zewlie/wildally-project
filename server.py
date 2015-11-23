@@ -38,6 +38,7 @@ app.jinja_env.undefined = StrictUndefined
 # Routes
 #################################################################################
 
+
 @app.route('/_track-click', methods=['GET', 'POST'])
 def track_click():
     """Grabs click info from a request on the map and inserts it into the DB."""

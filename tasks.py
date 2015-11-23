@@ -150,7 +150,12 @@ def test_task():
 
                 if click.org_id == org_id:
 
-                    analytics["month"]["week" + str((day_delta / 7) + 1)][1] += 1
+                    if day_delta < 14:
+                        analytics["month"]["week1"][1] += 1
+                    if day_delta < 21:
+                        analytics["month"]["week2"][1] += 1
+                    else:
+                        analytics["month"]["week3"][1] += 1
 
                     for click_filter in click.click_filters:
                         if str(click_filter.filter_id) in analytics["filters"]["month"].keys():

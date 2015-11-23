@@ -183,6 +183,8 @@ function processChart() {
     });
 
     setTimeout(function(){ generateLineChart(lineChartElement, dayChartLabels, dayChartData);
+                            console.log(monthChartLabels);
+                            console.log(monthChartData);
                            generatePieChart(filtersPieElement, dayFiltersArrays);
                            generatePieChart(allFiltersPieElement, dayAllFiltersArrays);
                         }, 500);
@@ -229,9 +231,9 @@ function generatePieChart(element, labelDataArrays) {
     var pieSlice;
 
     for (i = 0; i < labelDataArrays.length; i++) {
-        console.log(String(labelDataArrays[i][0]));
+
         labelDataArrays[i].push(pieColors[String(labelDataArrays[i][0])]);
-        console.log(labelDataArrays);
+
         pieSlice = {
             value: labelDataArrays[i][2],
             color: labelDataArrays[i][3][0],
@@ -265,9 +267,9 @@ function showChart(evt) {
 function toggleOrgFields(evt) {
 var orgCheckbox = document.getElementById('org-checkbox');
 if (orgCheckbox.checked) {
-        $("label.org-field").removeAttr("hidden");
+        $("#org-fields").removeClass("temp-hidden");
     } else {
-        $("label.org-field").attr("hidden", "true");
+        $("#org-fields").addClass("temp-hidden");
     }
 }
 

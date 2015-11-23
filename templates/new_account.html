@@ -28,32 +28,33 @@
         <input type='checkbox' id='org-checkbox' name='is-org' value='yes'> Yes
     </label><br />
 
-    <label for='org-name' class='org-field' hidden>Organization name: 
+<div id="org-fields" class="temp-hidden">
+    <label for='org-name' class='org-field'>Organization name: 
         <input type='text' name='org-name'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='ein' class='org-field' hidden>EIN: 
+    <label for='ein' class='org-field'>EIN: 
         <input type='text' name='ein'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='is-org' class='org-field' hidden>Do you want your full address to show in search results? <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
+    <label for='is-org' class='org-field'>Do you want your full address to show in search results? <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
         <input type='radio' name='show-address' value='1'> Yes
         <input type='radio' name='show-address' value='0' checked='checked'> No, show only my city
     </label><br />
 
-    <label for='address1' class='org-field' hidden>Address Line 1: 
+    <label for='address1' class='org-field'>Address Line 1: 
         <input type='text' name='address1'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='address2' class='org-field' hidden>Address Line 2:
+    <label for='address2' class='org-field'>Address Line 2:
         <input type='text' name='address2'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='city' class='org-field' hidden>City: 
+    <label for='city' class='org-field'>City: 
         <input type='text' name='city'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='state' class='org-field' hidden>State: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
+    <label for='state' class='org-field'>State: <span class="glyphicon glyphicon-question-sign" aria-hidden="true"> 
         <select name='state'>
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
@@ -109,27 +110,28 @@
 </select>
     </label><br />
 
-    <label for='zipcode' class='org-field' hidden>Zipcode: 
+    <label for='zipcode' class='org-field'>Zipcode: 
         <input type='text' name='zipcode'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='desc' class='org-field' hidden>Description: 
+    <label for='desc' class='org-field'>Description: 
         <input type='text' name='desc'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='phone' class='org-field' hidden>Organization phone: 
+    <label for='phone' class='org-field'>Organization phone: 
         <input type='text' name='phone'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='org-email' class='org-field' hidden>Organization email:
+    <label for='org-email' class='org-field'>Organization email:
         <input type='text' name='org-email'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
 
-    <label for='org-email' class='org-field' hidden>Organization website:
+    <label for='org-email' class='org-field'>Organization website:
         <input type='text' name='website'> <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
     </label><br />
+</div>
 
-        <input type='submit' value='Create account!'>
+        <input type='submit' class='btn btn-success' value='Create account!'>
   </form>
 
   {% endif %}

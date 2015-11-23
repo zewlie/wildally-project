@@ -2,7 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify
-from datetime import datetime
+from datetime import datetime, date
 from random import randint
 from pygeocoder import Geocoder
 from passlib.hash import pbkdf2_sha256
@@ -383,7 +383,7 @@ class Click(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Click id={} type_id={} org_id={} time={}>".format(self.id, self.type_id, self.org_id, self.time)
+        return "<Click id={} type_id={} org_id={} time={}>".format(self.id, self.type_id, self.org_id, datetime.strftime(self.time, "%m/%d"))
 
     @staticmethod
     def list_of_click_objects():
