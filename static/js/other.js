@@ -22,10 +22,8 @@ function toggleSettingsField(evt) {
     }
     else {
     var inputFieldId = editId.replace('edit-','#');
-
     var fieldCurrentValueId = '#current-' + inputFieldId.replace('#','');
     var fieldCurrentValueText = $(fieldCurrentValueId).text();
-
     var fieldButtonId = '#button-' + inputFieldId.replace('#','');
 
     console.log(inputFieldId, fieldCurrentValueId, fieldCurrentValueText);
@@ -60,7 +58,7 @@ function saveOneField(evt) {
                             $('#city').val() + '+' +
                             $('#state').val() + '+' +
                             $('#zipcode').val() + '+' +
-                            $('input[name=show_address]').val();
+                            $('input[name=show_address]:checked').val();
         successSpanId = '#address-success';
 
         $('#current-address1').text($('#address1').val());
@@ -86,7 +84,6 @@ function saveOneField(evt) {
     var fieldButtonId = '#' + this.id;
     var inputFieldId = fieldButtonId.replace('#button-','#');
     successSpanId = fieldButtonId.replace('#button-','#') + '-success';
-
     settingName = fieldButtonId.replace('#button-','');
     settingValue = $(inputFieldId).val();
 
@@ -108,53 +105,9 @@ function saveOneField(evt) {
       });
 
     showUpdateSuccess(successSpanId);
-
     }
-
-
-    // console.log(fieldJSON["responseText"]);
-    // if (fieldJSON.success == 'yes') {
-    
-    // }
-    // else {
-    //     showUpdateFailure(successSpanId);
-    // }
 }
 
-// function saveOneRadioField(evt) {
-//     console.log(this);
-//     var fieldButtonId = '#' + this.id;
-//     var inputFieldId = fieldButtonId.replace('#button-','#');
-//     var successSpanId = fieldButtonId.replace('#button-','#') + '-success';
-
-//     var settingName = fieldButtonId.replace('#button-','');
-//     var settingValue = $(inputFieldId).val();
-
-//     var fieldCurrentValueId = '#current-' +    var fieldButtonId = '#' + this.id;
-    // var inputFieldId = fieldButtonId.replace('#button-','#');
-    // successSpanId = fieldButtonId.replace('#button-','#') + '-success';
-
-    // settingName = fieldButtonId.replace('#button-','');
-    // settingValue = $(inputFieldId).val(); inputFieldId.replace('#','');
-
-//     $(fieldCurrentValueId).text(settingValue);
-//     $(inputFieldId).addClass("temp-hidden");
-//     $(fieldButtonId).addClass("temp-hidden");
-//     $(fieldCurrentValueId).removeClass("temp-hidden");
-
-//     var fieldJSON = $.get('/_update-settings', {
-//         'settingName': settingName,
-//         'settingValue': settingValue
-//       });
-
-//     // console.log(fieldJSON["responseText"]);
-//     // if (fieldJSON.success == 'yes') {
-//     showUpdateSuccess(successSpanId);
-//     // }
-//     // else {
-//     //     showUpdateFailure(successSpanId);
-//     // }
-// }
 
 function showUpdateSuccess(elementId) {
     $(elementId).html('<button type="button" class="btn btn-info btn-xs">Updated!</button>');
@@ -164,8 +117,8 @@ function showUpdateSuccess(elementId) {
         $(elementId).html('');
         $(elementId).css('display', 'inline-block');
     },2000);
-
 }
+
 
 function showUpdateFailure(elementId) {
     $(elementId).html('<button type="button" class="btn btn-danger btn-xs">Error! Try again</button>');
@@ -175,32 +128,7 @@ function showUpdateFailure(elementId) {
         $(elementId).html('');
         $(elementId).css('display', 'inline-block');
     },2000);
-
 }
-
-function uploadPhoto(evt) {
-        // var form_data = new FormData('file', $('#photo')[0]);
-
-        var fileInput = document.getElementById("photo");
-        console.log(fileInput);
-        var file = fileInput.files[0];
-        console.log(file);
-        var formData = new FormData();
-        console.log(formData);
-        formData.append('file', file);
-        console.log(formData['file']);
-
-
-        $.ajax({
-            type: 'POST',
-            url: '/photos',
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            async: false,
-        });
-    }
 
 
 function processChart() {
@@ -252,16 +180,14 @@ function processChart() {
                 (window[key + "AllFiltersArrays"]).push([innerKey, allFilters[key][innerKey][0], allFilters[key][innerKey][1]]);
             }
         }
-
-
     });
 
     setTimeout(function(){ generateLineChart(lineChartElement, dayChartLabels, dayChartData);
                            generatePieChart(filtersPieElement, dayFiltersArrays);
                            generatePieChart(allFiltersPieElement, dayAllFiltersArrays);
                         }, 500);
-
 }
+
 
 function generateLineChart(element, labelArray, dataArray) {
 
@@ -283,9 +209,8 @@ function generateLineChart(element, labelArray, dataArray) {
     lineChart = new Chart(ctx).Line(data);
 }
 
-function generatePieChart(element, labelDataArrays) {
 
-    // $('#pie-chart-container').html('');
+function generatePieChart(element, labelDataArrays) {
 
     var pieColors = { "1": ["#9C9C9C", "#C9C9C9"],
                       "2": ["#EAAB59", "#F2CD9D"],
@@ -302,8 +227,6 @@ function generatePieChart(element, labelDataArrays) {
                      };
     var data = [];
     var pieSlice;
-
-    // $('#pie-chart-container').html('<canvas id="filters-pie" width="190" height="190"></canvas><canvas id="all-filters-pie" width="190" height="190"></canvas>');
 
     for (i = 0; i < labelDataArrays.length; i++) {
         console.log(String(labelDataArrays[i][0]));
@@ -322,17 +245,10 @@ function generatePieChart(element, labelDataArrays) {
     pieChart = new Chart(ctx).Pie(data, {animateScale: true});
 }
 
+
 function showChart(evt) {
     lineChart.destroy();
     pieChart.destroy();
-
-    // $('#line-chart').remove();
-    // $('#filters-pie').remove();
-    // $('#all-filters-pie').remove();
-
-    // $('#line-chart').append('<canvas id="results-graph"><canvas>');
-    // $('#filters-pie').append('<canvas id="results-graph"><canvas>');
-    // $('#all-filters-pie').append('<canvas id="results-graph"><canvas>');
 
     var buttonId = "#" + this.id;
     var chartId = this.id.replace('show-','');
@@ -343,14 +259,43 @@ function showChart(evt) {
     generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
     generatePieChart(filtersPieElement, window[chartId + "FiltersArrays"]);
     generatePieChart(allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
-
 }
 
 
+function toggleOrgFields(evt) {
+var orgCheckbox = document.getElementById('org-checkbox');
+if (orgCheckbox.checked) {
+        $("label.org-field").removeAttr("hidden");
+    } else {
+        $("label.org-field").attr("hidden", "true");
+    }
+}
 
+
+function removePhoto(evt) {
+    console.log(this);
+    var spanId = '#' + this.id;
+    var photoId = $(spanId).attr('name');
+    var containerId = this.id.replace('remove-','#remove-container-');
+    var photoDivId = this.id.replace('remove-','#');
+    var carouselItemId = this.id.replace('remove-thumb-','#item-');
+    $(spanId).css('display', 'none');
+    $(containerId).css('display', 'none');
+    $(photoDivId).css('display', 'none');
+    console.log($(carouselItemId));
+    $(carouselItemId).remove();
+
+    fieldJSON = $.get('/_remove-photo', {
+        'photoId': photoId,
+      });
+}
+
+
+// ==================== EVENT HANDLERS ====================
 
 $('.click-to-edit').on("click", toggleSettingsField);
 $('.click-to-save').on("click", saveOneField);
+$('.remove-photo').on("click", removePhoto);
 $('.show-chart').on("click", showChart);
-// $('.click-to-save-radio').on("click", saveOneRadioField);
-// $('#upload-photo').on("click", uploadPhoto);
+$('#org-checkbox').on("change", toggleOrgFields);
+

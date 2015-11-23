@@ -1,3 +1,5 @@
+"""Celery tasks."""
+
 from celery.task import task
 from redis import Redis
 from model import connect_to_db, User, Org, Animal, Click, ClickFilter
@@ -11,10 +13,6 @@ connect_to_db(app)
 @task()
 def test_task():
 
-    gathered_clicks = import_gathered_clicks()
-    insert = insert_clicks_into_db(gathered_clicks)
-    reset = reset_gathered_clicks()
-
     click_info_from_db = load_click_info_from_db()
     orgs, animals, clicks, click_filters = click_info_from_db
 
@@ -25,10 +23,15 @@ def test_task():
         now = datetime.now()
         today = now.date()
 
+        # Month view
         previous_weeks = 3
+        # Week view
         previous_days = 6
+        # Day view
         previous_hours = 23
 
+        # Basic structure for analytics dict.
+        # Will be used to generate JSON.
         analytics = {
                      "month": {},
                      "week": {},
@@ -57,8 +60,8 @@ def test_task():
 
 
         while previous_weeks >= 0:
-            week_end = today - timedelta(days=(6 + (previous_weeks * 7)))
-            week_start = week_end + timedelta(days=6)
+            week_start = today - timedelta(days=(6 + (previous_weeks * 7)))
+            week_end = week_start + timedelta(days=6)
             analytics["month"]["week" + str(previous_weeks)] = [date.strftime(week_start, "%m/%d") + " - " + date.strftime(week_end, "%m/%d"), 0]
             previous_weeks -= 1
 

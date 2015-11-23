@@ -4,8 +4,6 @@ from model import User, Org, Pickup, Animal, ContactType, SiteType, OrgAnimal
 
 import csv
 from datetime import datetime
-from random import randint
-
 from model import connect_to_db, db
 from server import app
 
@@ -45,27 +43,20 @@ def load_users():
 
     for row in data:
 
+        # Creates the username by reformatting the org name.
         username = row[1]
         username = username.strip()
         username = username.replace(" ", "")
         username = username[:25]
+        username = User.generate_unique_username(username)
         account_made = datetime.now()
-
-        username_match = db.session.query(User).filter(User.username == username).first()
-
-        if username_match:
-            while username_match.username == username:
-                username = username[:24] + str(randint(0,9))
 
         user = User(email='email@email.com',
                     username=username,
                     password='password',
                     account_made=account_made)
 
-        # We need to add to the session or it won't ever be stored
         db.session.add(user)
-
-# Once we're done, we should commit our work
     db.session.commit()
 
 
@@ -98,10 +89,7 @@ def load_orgs():
                     accept_animals=1,
                     accept_volunteers=accept_volunteers)
 
-        # We need to add to the session or it won't ever be stored
         db.session.add(org)
-
-    # Once we're done, we should commit our work
     db.session.commit()
 
 
@@ -124,10 +112,7 @@ def load_pickups():
                         latitude=coords[0],
                         longitude=coords[1])
 
-        # We need to add to the session or it won't ever be stored
         db.session.add(pickup)
-
-# Once we're done, we should commit our work
     db.session.commit()
 
 
@@ -143,7 +128,6 @@ def load_animals():
         animal = Animal(name=name)
 
         db.session.add(animal)
-
     db.session.commit()
 
 
@@ -159,7 +143,6 @@ def load_contact_types():
         contact_type = ContactType(id=id)
 
         db.session.add(contact_type)
-
     db.session.commit()
 
 
@@ -175,7 +158,6 @@ def load_site_types():
         site_type = SiteType(id=id)
 
         db.session.add(site_type)
-
     db.session.commit()
 
 
@@ -189,15 +171,11 @@ def load_org_animals():
     data = csv_to_tuples(org_animal_csv_path)
 
     for row in data:
-
         org_id, type_id = row[:2]
 
         org_animal = OrgAnimal(org_id=org_id, type_id=type_id)
 
-        # We need to add to the session or it won't ever be stored
         db.session.add(org_animal)
-
-    # Once we're done, we should commit our work
     db.session.commit()
 
 

@@ -1,5 +1,5 @@
-# celery configuration settings
-# from celery.schedules import crontab
+"""Celery configuration settings."""
+
 from datetime import timedelta
 
 BROKER_URL = 'redis://localhost:6379/'

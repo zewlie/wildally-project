@@ -59,7 +59,8 @@ function saveOneField(evt) {
                             $('#address2').val() + '+' +
                             $('#city').val() + '+' +
                             $('#state').val() + '+' +
-                            $('#zipcode').val();
+                            $('#zipcode').val() + '+' +
+                            $('input[name=show_address]:checked').val();
         successSpanId = '#address-success';
 
         $('#current-address1').text($('#address1').val());
@@ -67,6 +68,7 @@ function saveOneField(evt) {
         $('#current-city').text($('#city').val());
         $('#current-state').text($('#state').val());
         $('#current-zipcode').text($('#zipcode').val());
+        $('#current-show_address').html('<i>Location preferences updated.</i>');
 
         $('.address-field').addClass("temp-hidden");
         $('#button-address').addClass("temp-hidden");
@@ -200,15 +202,18 @@ function uploadPhoto(evt) {
         });
     }
 
+
 function processChart() {
 
     $.get('/analytics.json', function (analytics) {
 
-        var month = analytics["month"];
-        var week = analytics["week"];
-        var day = analytics["day"];
-        var filters = analytics["filters"];
-        var allFilters = analytics["allfilters"];
+        var jsonWorked = JSON.parse(analytics);
+
+        var month = jsonWorked["month"];
+        var week = jsonWorked["week"];
+        var day = jsonWorked["day"];
+        var filters = jsonWorked["filters"];
+        var allFilters = jsonWorked["allfilters"];
 
         var key, innerKey, weekLabel, weekClickCount, dayLabel, dayClickCount, hourLabel, hourClickCount;
 
@@ -237,15 +242,14 @@ function processChart() {
         }
 
         for (key in filters) {
-            for (innerKey in key) {
-                (window[key + "FiltersArrays"]).push([filters[key], filters[key], filters[key]]);
-                console.log(key + " " + innerKey + " " + filters[key] + " " + filters[key][innerKey]);
+            for (innerKey in filters[key]) {
+                (window[key + "FiltersArrays"]).push([innerKey, filters[key][innerKey][0], filters[key][innerKey][1]]);
             }
         }
 
         for (key in allFilters) {
-            for (innerKey in key) {
-
+            for (innerKey in allFilters[key]) {
+                (window[key + "AllFiltersArrays"]).push([innerKey, allFilters[key][innerKey][0], allFilters[key][innerKey][1]]);
             }
         }
 
@@ -276,10 +280,12 @@ function generateLineChart(element, labelArray, dataArray) {
         };
 
     var ctx = element.getContext("2d");
-    var myLineChart = new Chart(ctx).Line(data);
+    lineChart = new Chart(ctx).Line(data);
 }
 
 function generatePieChart(element, labelDataArrays) {
+
+    // $('#pie-chart-container').html('');
 
     var pieColors = { "1": ["#9C9C9C", "#C9C9C9"],
                       "2": ["#EAAB59", "#F2CD9D"],
@@ -297,6 +303,8 @@ function generatePieChart(element, labelDataArrays) {
     var data = [];
     var pieSlice;
 
+    // $('#pie-chart-container').html('<canvas id="filters-pie" width="190" height="190"></canvas><canvas id="all-filters-pie" width="190" height="190"></canvas>');
+
     for (i = 0; i < labelDataArrays.length; i++) {
         console.log(String(labelDataArrays[i][0]));
         labelDataArrays[i].push(pieColors[String(labelDataArrays[i][0])]);
@@ -311,10 +319,20 @@ function generatePieChart(element, labelDataArrays) {
         }
 
     var ctx = element.getContext("2d");
-    var myPieChart = new Chart(ctx).Pie(data, {animateScale: true});
+    pieChart = new Chart(ctx).Pie(data, {animateScale: true});
 }
 
 function showChart(evt) {
+    lineChart.destroy();
+    pieChart.destroy();
+
+    // $('#line-chart').remove();
+    // $('#filters-pie').remove();
+    // $('#all-filters-pie').remove();
+
+    // $('#line-chart').append('<canvas id="results-graph"><canvas>');
+    // $('#filters-pie').append('<canvas id="results-graph"><canvas>');
+    // $('#all-filters-pie').append('<canvas id="results-graph"><canvas>');
 
     var buttonId = "#" + this.id;
     var chartId = this.id.replace('show-','');
@@ -323,7 +341,18 @@ function showChart(evt) {
     $(buttonId).addClass('btn-success');
 
     generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
+    generatePieChart(filtersPieElement, window[chartId + "FiltersArrays"]);
+    generatePieChart(allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
+
 }
+
+  function toggleOrgFields(evt) {
+    if (orgCheckbox.checked) {
+            $("label.org-field").removeAttr("hidden");
+        } else {
+            $("label.org-field").attr("hidden", "true");
+        }
+    }
 
 
 
@@ -331,5 +360,6 @@ function showChart(evt) {
 $('.click-to-edit').on("click", toggleSettingsField);
 $('.click-to-save').on("click", saveOneField);
 $('.show-chart').on("click", showChart);
+$('#org-checkbox').on("change", toggleOrgFields);
 // $('.click-to-save-radio').on("click", saveOneRadioField);
 // $('#upload-photo').on("click", uploadPhoto);

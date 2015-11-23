@@ -132,21 +132,5 @@
         <input type='submit' value='Create account!'>
   </form>
 
-  <script>
-
-  var orgCheckbox = document.getElementById("org-checkbox");
-
-  function toggleOrgFields(evt) {
-    if (orgCheckbox.checked) {
-            $("label.org-field").removeAttr("hidden")
-        } else {
-            $("label.org-field").attr("hidden", "true")
-        }
-    }
-
-  orgCheckbox.addEventListener('change', toggleOrgFields);
-
-  </script>
-
   {% endif %}
   {% endblock %}

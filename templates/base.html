@@ -3,7 +3,7 @@
 <head>
   <title>{% block title %} Title {% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="static/style.css">
+  <link rel="stylesheet" type="text/css" href="static/css/style.css">
   <link rel="shortcut icon" href="/static/img/favicon.ico" />
   <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
@@ -16,16 +16,43 @@
       </a>
     </div>
      <ul class="nav navbar-nav navbar-right">
+      {% for message in get_flashed_messages() %}
+            <li><a href="#" class="flashed-messages">{{ message }}</a></li>
+      {% endfor %} 
       {% if session['user_id'] %}
           <li><a href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       {% else %}
           <li><a href="/new">Register</a><li>
-          <li><a href="/login">Login</a><li>
+          <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a><li>
 {% endif %}
       </ul>
   </div>
 </nav>
+
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="login-label">Login to WildAlly</h4>
+      </div>
+      <div class="modal-body">
+            <form action='/login-success' method="POST">
+                <label for='username'>Username: 
+                    <input type='text' name='username'>
+                </label> 
+                <label for='password'>Password: 
+                    <input type='password' name='password'>
+                </label> 
+      </div>
+      <div class="modal-footer">
+          <input type='submit' class='btn btn-success' value='Log in!'>
+            </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <body>
 
@@ -38,18 +65,15 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-  {% for message in get_flashed_messages() %}
-    <li>{{ message }}</li>
-  {% endfor %} 
-
   {% block content %} Content {% endblock %}
 
 </div>
 </div>
 </div>
 
-<script src="/static/other.js"></script>
+<script src="/static/js/other.js"></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 {% block javascript %} Javascript {% endblock %}
 </body>
+
 </html>

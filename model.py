@@ -1,6 +1,9 @@
 """Models and database functions for WildAlly."""
 
 from flask_sqlalchemy import SQLAlchemy
+from flask import jsonify
+from datetime import datetime
+from random import randint
 from pygeocoder import Geocoder
 from passlib.hash import pbkdf2_sha256
 import time
@@ -11,9 +14,9 @@ db = SQLAlchemy()
 ##############################################################################
 # Model definitions
 
-# User class
+
 class User(db.Model):
-    """ """
+    """Basic user class."""
 
     __tablename__ = "users"
 
@@ -25,7 +28,7 @@ class User(db.Model):
     last_login = db.Column(db.DateTime)
 
     def __repr__(self):
-        """Provide helpful representation when printed."""
+        """Provides helpful representation when printed."""
 
         return "<User id={} username={} email={} account_made={}>".format(self.id, self.username, self.email, self.account_made)
 
@@ -36,19 +39,41 @@ class User(db.Model):
         self.account_made = account_made
 
     def hash_pw(self, password):
-        """Hash & salt password."""
+        """Hashes & salts password."""
 
         return pbkdf2_sha256.encrypt(password, rounds=1111, salt_size=16)
 
     def verify_pw(self, password):
-        """Verify password."""
+        """Verifies password; returns True when password matches user's account."""
 
         return pbkdf2_sha256.verify(password, self.password)
 
+    def update_setting(self, setting_name, setting_value):
+        """Updates an attribute on the user account."""
 
-# Wildlife organization (special user) class
+        if setting_name == 'password':
+            setting_value = self.hash_pw(setting_value)
+        setattr(self, setting_name, setting_value)
+        db.session.commit()
+
+        if getattr(self, setting_name) == setting_value:
+            return jsonify({'success': 'yes'})
+
+    @staticmethod
+    def generate_unique_username(username):
+        """Checks if the username already exists; if so, appends a random int to make it unique."""
+
+        username_match = db.session.query(User).filter(User.username == username).first()
+
+        if username_match:
+            while username_match.username == username:
+                username = username[:24] + str(randint(0,9))
+
+        return username
+        
+
 class Org(db.Model):
-    """ """
+    """Org user class; holds additional user info."""
 
     __tablename__ = "orgs"
 
@@ -73,12 +98,18 @@ class Org(db.Model):
                             backref=db.backref("org"))
 
     def __repr__(self):
-        """Provide helpful representation when printed."""
+        """Provides helpful representation when printed."""
 
         return "<Org id={} user_id={} name={} location={}, {}>".format(self.id, self.user_id, self.name, self.city, self.state)
 
+    @staticmethod
+    def list_of_org_objects():
+        """Returns a list of objects representing all rows in orgs."""
+        orgs = db.session.query(Org).all()
+        return orgs
+
     def make_geocode(self):
-        """ Generate geocode from a list of address attributes, e.g. [street, city, state]. """
+        """Generates geocode from a list of address attributes, e.g. [street, city, state]."""
 
         if self.show_address == 1:
             address = [self.address1, self.address2, self.city, self.state, self.zipcode]
@@ -92,9 +123,39 @@ class Org(db.Model):
         time.sleep(0.2)
         return coords
 
-# Pickup point/radius class
+    def update_setting(self, setting_name, setting_value):
+        """Updates an attribute on the org account."""
+
+        setting_name = setting_name.replace('org-','')
+        setattr(self, setting_name, setting_value)
+        db.session.commit()
+
+        if getattr(self, setting_name) == setting_value:
+            return jsonify({'success': 'yes'})
+
+    def update_address(self, address_string):
+        """Updates the address fields on the org account and the associated geocode in pickups."""
+
+        address1, address2, city, state, zipcode, show_address = address_string.split('+')
+        setattr(self, 'address1', address1)
+        setattr(self, 'address2', address2)
+        setattr(self, 'city', city)
+        setattr(self, 'state', state)
+        setattr(self, 'zipcode', zipcode)
+        setattr(self, 'show_address', show_address)
+        db.session.commit()
+
+        pickup = self.pickups[0]
+        coords = self.make_geocode()
+        setattr(pickup, 'latitude', coords[0])
+        setattr(pickup, 'longitude', coords[1])
+        db.session.commit()
+
+        return jsonify({'success': 'yes'})
+
+
 class Pickup(db.Model):
-    """ """
+    """Class for org locations/pickup points."""
 
     __tablename__ = "pickups"
 
@@ -113,15 +174,14 @@ class Pickup(db.Model):
         return "<Pickup org_id={} latitude={} longitude={} radius={}>".format(self.org_id, self.latitude, self.longitude, self.radius)
     
 
-# Hours (open hours for organizations) class
 class Hour(db.Model):
-    """ """
+    """Class for org open hours."""
 
     __tablename__ = "hours"
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     org_id = db.Column(db.Integer, db.ForeignKey('orgs.id'), nullable=False)
-    # Weekday set to int, maybe string would be better?
+    ## TODO: Weekday set to int, maybe string would be better?
     weekday = db.Column(db.Integer, nullable=False)
     start_hour = db.Column(db.Float, nullable=True)
     end_hour = db.Column(db.Float, nullable=True)
@@ -131,9 +191,8 @@ class Hour(db.Model):
                             backref=db.backref("hours"))
 
 
-# Org <-> animals association class
 class OrgAnimal(db.Model):
-    """ """
+    """Class for connections between orgs and animals."""
 
     __tablename__ = "org_animals"
 
@@ -154,9 +213,8 @@ class OrgAnimal(db.Model):
         return "<OrgAnimal org_id={} type_id={} name={}>".format(self.org_id, self.type_id, self.animal.name)
 
 
-# Animal type class
 class Animal(db.Model):
-    """ """
+    """Class for animal types that orgs may accept."""
 
     __tablename__ = "animals"
 
@@ -169,10 +227,16 @@ class Animal(db.Model):
 
         return "<Animal id={} name={} desc={}>".format(self.id, self.name, self.desc)
 
+    @staticmethod
+    def list_of_animal_objects():
+        """Returns a list of objects representing all rows in animals."""
 
-# Contact type class
+        animals = db.session.query(Animal).all()
+        return animals
+
+
 class ContactType(db.Model):
-    """ """
+    """Class for org contact types."""
 
     __tablename__ = "contact_types"
 
@@ -183,9 +247,9 @@ class ContactType(db.Model):
 
         return "<ContactType id={}>".format(self.id)
 
-# (org) Phone class
+
 class Phone(db.Model):
-    """ """
+    """Class for org phone numbers."""
 
     __tablename__ = "phones"
 
@@ -201,9 +265,8 @@ class Phone(db.Model):
                             backref=db.backref("phones"))
 
 
-# (org) Email class
 class Email(db.Model):
-    """ """
+    """Class for org email addresses."""
 
     __tablename__ = "emails"
 
@@ -219,9 +282,8 @@ class Email(db.Model):
                             backref=db.backref("emails"))
 
 
-# (org) Social media class
 class SiteType(db.Model):
-    """ """
+    """Class for org website/social media account types."""
 
     __tablename__ = "site_types"
 
@@ -232,9 +294,9 @@ class SiteType(db.Model):
 
         return "<SiteType id={}>".format(self.id)
 
-# (org) Social media class
+
 class Site(db.Model):
-    """ """
+    """Class for org websites/social media links."""
 
     __tablename__ = "sites"
 
@@ -251,9 +313,8 @@ class Site(db.Model):
                             backref=db.backref("sites"))
 
 
-# Volunteer applications
 class Volunteer(db.Model):
-    """ """
+    """Class for volunteer applicants."""
 
     __tablename__ = "volunteers"
 
@@ -276,9 +337,8 @@ class Volunteer(db.Model):
                             backref=db.backref("volunteers"))
 
 
-# Volunteer opportunities with orgs
 class VolunteerJob(db.Model):
-    """ """
+    """Class for open volunteer jobs."""
 
     __tablename__ = "volunteer_jobs"
 
@@ -292,9 +352,8 @@ class VolunteerJob(db.Model):
                             backref=db.backref("jobs"))
 
 
-# Educational courses offered by orgs
 class Course(db.Model):
-    """ """
+    """Class for educational courses offered by orgs."""
 
     __tablename__ = "courses"
 
@@ -308,9 +367,8 @@ class Course(db.Model):
                             backref=db.backref("courses"))
 
 
-# Analytics class
 class Click(db.Model):
-    """ """
+    """Class for map marker clicks."""
 
     __tablename__ = "clicks"
 
@@ -327,9 +385,16 @@ class Click(db.Model):
 
         return "<Click id={} type_id={} org_id={} time={}>".format(self.id, self.type_id, self.org_id, self.time)
 
-# Analytics class
+    @staticmethod
+    def list_of_click_objects():
+        """Returns a list of objects representing all rows in clicks."""
+
+        clicks = db.session.query(Click).all()
+        return clicks
+
+
 class ClickFilter(db.Model):
-    """ """
+    """Class for filters associated with clicks on map markers."""
 
     __tablename__ = "click_filters"
 
@@ -345,11 +410,12 @@ class ClickFilter(db.Model):
 
         return "<ClickFilter id={} click_id={} filter_id={}>".format(self.id, self.click_id, self.filter_id)
 
+    @staticmethod
+    def list_of_click_filter_objects():
+        """Returns a list of objects representing all rows in click_filters."""
 
-
-
-
-
+        click_filters = db.session.query(ClickFilter).all()
+        return click_filters
 
 
 ##############################################################################

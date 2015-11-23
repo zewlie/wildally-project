@@ -1,35 +1,29 @@
-html, body { height: 100%; margin: 0; padding: 0; }
+/* ========================================== GENERAL ========================================== */
 
-/*
- * Base structure for sidebar template
- */
+html, body { height: 100%; margin: 0; padding: 0; }
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 100px;
 }
 
-
-/*
- * Global add-ons
- */
-
 .sub-header {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
 
-/*
- * Top navigation
- * Hide default border to remove 1px line.
- */
+/* ========================================== NAVBAR ========================================== */
+
 .navbar-fixed-top {
   border: 0;
 }
 
-/*
- * Sidebar
- */
+.flashed-messages {
+  color: #ff8333 !important;
+  font-weight: bold;
+}
+
+/* ========================================== SIDEBAR ========================================== */
 
 /* Hide for mobile, show later */
 .sidebar {
@@ -69,24 +63,64 @@ body {
 }
 
 
-/*
- * Main content
- */
+/* ========================================== MAIN CONTENT ========================================== */
 
 .main .page-header {
   margin-top: 0;
 }
 
-
-#main-map { height: 960px; width: 100%; margin-top:-50px; }
+#main-map { 
+  height: 960px; 
+  width: 100%; 
+  margin-top:-50px; }
 
 .temp-hidden {
   display: none;
 }
 
+/* ========================================== PHOTOS ========================================== */
+
 .thumbnail {
   width: 120px;
+  height: 105px;
+  background-size: 120px 105px;
   display: inline-block;
+  background-position: center;
+}
+
+.remove-photo-container {
+  margin: 4px;
+  width: 18px;
+  height: 18px;
+  color: #cc0000;
+  border-radius: 25px;
+  background-color: #fff;
+}
+
+span.remove-photo {
+  margin-top: -2px;
+  margin-left: -2px;
+  color: #cc0000;
+  font-size: 160%;
+  border-radius: 20px;
+  cursor: pointer; 
+  cursor: hand;
+}
+
+.photo-file-input {
+    display: none;
+}
+
+
+/* ========================================== INFOWINDOW & CAROUSEL ========================================== */
+
+span.glyphicon-earphone {
+  font-size: 80%;
+}
+
+h4.org-phone {
+  color: #0065cc;
+  font-weight: bold;
 }
 
 .infowindow-photo {
@@ -120,12 +154,13 @@ body {
 }
 .window-left {
   display: inline-block;
+  padding-left: 10px;
   padding-right: 30px;
-  width: 230px;
+  width: 240px;
 }
 
 .window-right {
   display: inline-block;
-  width: 270px;
+  width: 260px;
   padding-left: 10px;
 }

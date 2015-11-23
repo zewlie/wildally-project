@@ -8,9 +8,7 @@
         <ul class="nav nav-sidebar">
 
             <li><a href="/settings">Account Settings</a></li>
-
             <li><a href="/photos">Photos</a></li>
-
             <li><a href="/analytics">Analytics</a></li>
 
         </ul>
@@ -25,10 +23,16 @@
   {% else %}
 
 {% if filenames %}
+<h3>Your Photos</h3>
 {% for filename in filenames %}
-<img class='thumbnail' src={{ root }}/{{ filename }}>
+<div id='thumb-{{ loop.index }}' class='thumbnail' style='background-image: url({{ root }}{{ filename }});'>
+  <div id='remove-container-{{ loop.index }}' class='remove-photo-container'>
+      <span id='remove-thumb-{{ loop.index }}' name={{ filename }} class="glyphicon glyphicon-remove-sign remove-photo" aria-hidden="true"></span>
+  </div>
+</div>
 {% endfor %}
-
+<h3>Carousel Preview</h3>
+<p><i>This will display when your organization's map marker is clicked.</i></p>
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">
   <!-- Indicators -->
   <ol class="carousel-indicators">
@@ -40,11 +44,11 @@
 
   <!-- Wrapper for slides -->
   <div class="carousel-inner" role="listbox">
-    <div class="item active">
+    <div class="item active" id='item-1'>
       <img src={{ root }}/{{ filenames[0] }}>
     </div>
     {% for filename in filenames[1:] %}
-    <div class="item">
+    <div class="item" id='item-{{ loop.index + 1 }}'>
       <img src={{ root }}/{{ filename }}>
     </div>
     {% endfor %}
@@ -64,47 +68,13 @@
 
 <p>Upload a photo!</p>
 <form action="/_upload-photo" method="POST" id="photo-form" enctype="multipart/form-data">
-      <input type="file" name="photo" id="photo">
+  <label class="btn btn-primary" for="photo">
+      <input type="file" class="photo-file-input" name="photo" id="photo" style="display: none;">
+      Select Photo
+  </label>
       <!-- <button type="button" id="upload-photo" class="btn btn-success btn-xs">Upload Photo</button> -->
-      <input type="submit" value="Upload Photo">
+      <br /><input type="submit" value="Upload Photo" class="btn btn-success">
 </form>
-
-<script>
-// function uploadPhoto(evt) {
-
-//     evt.preventDefault();
-
-//     var photoElement = document.getElementById('photo');
-//     var photoFile = photoElement.files[0];
-//     var formData = new FormData();
-
-//     // var sessionID = 8;
-//     // formData.append('id', sessionID);
-
-//     // formData.append("file", photoFile);
-
-
-//     $.ajax({
-//             type: 'POST',
-//             url: '/_upload-photo',
-//             data: formData,
-//             contentType: false,
-//             cache: false,
-//             processData: false,
-//             async: false,
-//             success: function(data) {
-//                 console.log('Success!');
-//             },
-//         });
-
-//       // $.post('/photos', formData, function(){
-
-//       // });
-// }
-
-// $('#photo-form').on('submit',uploadPhoto);
-
-</script>
 
 {% endif %}
   {% endblock %}

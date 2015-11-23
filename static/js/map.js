@@ -150,11 +150,11 @@ console.log(animalTypes);
         }
 
           if (org.address1) {
-              if (org.address2) {
+              if (org.address2 && org.show_address == 1) {
                   printAddress = org.address1 + '<br />' + org.address2;
-              } else {
+              } else if (org.show_address == 1) {
                   printAddress = org.address1 + '<br />'; }
-          } else { printAddress = 'This is an approximate location. Please call for directions. <br />'; }
+          } else { printAddress = 'This is an approximate location. Please call for directions. <br /><br />'; }
 
           if (org.animals.length == 5) {
               orgAnimals = '<li>all wildlife</li>';
@@ -170,7 +170,9 @@ console.log(animalTypes);
                   orgPhoto +
               '<div class="window-right">' +
                   '<h3>' + org.orgName + '</h3>' +
-                  '<h5>' + org.phone + '</h5>' +
+                  '<a href="tel:' + org.phone + '">' + 
+                  '<h4 class="' + org.phone + '"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> &nbsp;' +
+                  org.phone + '</h4></a>' +
                   '<p>' + printAddress +
                         org.city + ', ' +
                         org.state + ' ' +
