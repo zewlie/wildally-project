@@ -9,26 +9,34 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
 </head>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-transparent navbar-fixed-top">
       <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="/">WildAlly
       </a>
     </div>
-     <ul class="nav navbar-nav navbar-right">
-      {% for message in get_flashed_messages() %}
-            <li><a href="#" class="flashed-messages">{{ message }}</a></li>
-      {% endfor %} 
-      {% if session['user_id'] %}
+
+  {% if session['user_id'] %}
+    <div class="small-navbar navbar-logged-in">
+      <ul class="nav navbar-nav navbar-right">
           <li><a href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
-      {% else %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="small-navbar navbar-logged-out">
+      <ul class="nav navbar-nav navbar-right">
           <li><a href="/new">Register</a><li>
           <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a><li>
-{% endif %}
       </ul>
+    </div>
+  {% endif %}
+      </ul>
+    </div>
   </div>
 </nav>
+
+<body>
 
 <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-label">
   <div class="modal-dialog" role="document">
@@ -54,20 +62,26 @@
   </div>
 </div>
 
-<body>
-
   <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
+          {% for message in get_flashed_messages() %}
+            <div class="flashed-messages alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              {{ message }}</div>
+          {% endfor %} 
+
           {% block sidebar %}
 
           {% endblock %}
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+  {% block map %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-10 col-lg-offset-2 main">
 
   {% block content %} Content {% endblock %}
 
 </div>
+  {% endblock %}
 </div>
 </div>
 

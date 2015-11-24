@@ -1,10 +1,36 @@
+/* ========================================== IMPORTS ========================================== */
+
+
+@import url(https://fonts.googleapis.com/css?family=Arvo:400,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700,700italic);
+
+
 /* ========================================== GENERAL ========================================== */
 
-html, body { height: 100%; margin: 0; padding: 0; }
 
-/* Move down content because we have a fixed navbar that is 50px tall */
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  padding: 0; 
+}
+
 body {
-  padding-top: 100px;
+  margin-top: 50px;
+  font-family: "Open Sans", "serif";
+}
+
+.h1, h1, .h2, h2, .h3, h3, .h4, h4, .h5, h5, .h6, h6 {
+  font-family: "Arvo", "serif";
+  text-transform: lowercase;
+}
+
+.h3, h3 {
+  color: #DE5237;
+  font-size: 150%;
+}
+
+label {
+  font-weight: 600;
 }
 
 .sub-header {
@@ -12,49 +38,103 @@ body {
   border-bottom: 1px solid #eee;
 }
 
+
 /* ========================================== NAVBAR ========================================== */
+
+.small-navbar {
+  float: right !important;
+  margin-right: -15px;
+  padding-right: 10px;
+  height: 50px;
+  background: url('/static/img/wood_1.png');
+  -webkit-border-radius: 0px 0px 25px 25px;
+  -moz-border-radius: 0px 0px 25px 25px;
+  border-radius: 0px 0px 25px 25px;
+}
+
+.navbar-logged-in {
+  width: 255px;
+}
+
+.navbar-logged-out {
+  width: 220px;
+}
+
+.navbar-nav>li>a {
+  color: #63DBA5;
+  padding: 15px 18px;
+  font-family: "Arvo", "serif";
+  text-transform: lowercase;
+  font-size: 110%;
+}
+
+.navbar-nav>li>a:hover {
+  background: transparent;
+  color: #FF785E;
+}
+
+.navbar-nav {
+  padding-right: 30px;
+}
 
 .navbar-fixed-top {
   border: 0;
 }
 
+.navbar-transparent {
+  background: transparent;
+  border: 0px;
+}
+
 .flashed-messages {
-  color: #ff8333 !important;
   font-weight: bold;
 }
 
+
 /* ========================================== SIDEBAR ========================================== */
+
 
 /* Hide for mobile, show later */
 .sidebar {
   display: none;
 }
+
 @media (min-width: 768px) {
   .sidebar {
     position: fixed;
-    top: 51px;
+    top: 0;
     bottom: 0;
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 20px;
+    padding: 50px 20px 20px 20px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #f5f5f5;
-    border-right: 1px solid #eee;
+    background: url('/static/img/wood_1.png');
+    border-right: 0px;
   }
 }
 
 /* Sidebar navigation */
 .nav-sidebar {
-  margin-right: -21px; /* 20px padding + 1px border */
+  margin-right: -20px; /* 20px padding + 1px border */
   margin-bottom: 20px;
   margin-left: -20px;
 }
-.nav-sidebar > li > a {
+
+.nav-sidebar > li {
+  color: #fff;
+  font-size: 100%;
   padding-right: 20px;
   padding-left: 20px;
+  line-height: 200%;
 }
+
+.nav-sidebar > li.sidebar-note {
+  line-height: 140%;
+  padding-bottom: 10px;
+}
+
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
@@ -62,8 +142,16 @@ body {
   background-color: #428bca;
 }
 
-
 /* ========================================== MAIN CONTENT ========================================== */
+
+hr {
+  margin: -5px 0px 12px 0px;
+  width: 200px;
+  border: 0;
+  height: 1px;
+  background: #333;
+  background-image: linear-gradient(to right, #9E9E9E, #fff);
+}
 
 .main .page-header {
   margin-top: 0;
@@ -78,7 +166,17 @@ body {
   display: none;
 }
 
+.settings-section {
+  padding-top: 20px;
+}
+
+.setting-label {
+  font-weight: normal;
+}
+
+
 /* ========================================== PHOTOS ========================================== */
+
 
 .thumbnail {
   width: 120px;
@@ -92,7 +190,7 @@ body {
   margin: 4px;
   width: 18px;
   height: 18px;
-  color: #cc0000;
+  color: #F55656;
   border-radius: 25px;
   background-color: #fff;
 }
@@ -100,7 +198,7 @@ body {
 span.remove-photo {
   margin-top: -2px;
   margin-left: -2px;
-  color: #cc0000;
+  color: #F55656;
   font-size: 160%;
   border-radius: 20px;
   cursor: pointer; 
@@ -113,6 +211,7 @@ span.remove-photo {
 
 
 /* ========================================== INFOWINDOW & CAROUSEL ========================================== */
+
 
 span.glyphicon-earphone {
   font-size: 80%;
@@ -167,6 +266,25 @@ h4.org-phone {
 
 /* ========================================== FORMS ========================================== */
 
+
 span.click-to-edit {
-  color: #39ac39;
+  color: #42A679;
+}
+
+#address-entry {
+  cursor: pointer; 
+  cursor: hand;
+  padding: 0px 5px 0px 5px;
+  color: #333;
+  width: 100%;
+}
+
+.btn-success {
+  background-color: #42A679;
+  border-color: #419E74;
+}
+
+.btn-success:hover {
+  background-color: #4CC28D;
+  border-color: #45B583;
 }

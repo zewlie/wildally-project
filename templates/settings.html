@@ -17,9 +17,11 @@
 
   {% block content %} 
 
-<h4>Account</h4>
+<div>
+<h3>Account</h3>
 
-    <label for='username'>Username: <span id="current-username">{{ username }}</span>
+
+    <label for='username'><span class="setting-label">Username: &nbsp; </span> <span id="current-username">{{ username }}</span>
 
         <input type='text' id='username' name='username' class='temp-hidden'>
 
@@ -30,7 +32,7 @@
         <span id='username-success'></span>
     </label><br />
 
-    <label for='email'>Email: <span id="current-email">{{ email }}</span>
+    <label for='email'><span class="setting-label">Email: &nbsp; </span> <span id="current-email">{{ email }}</span>
 
         <input type='text' id='email' name='email' class='temp-hidden'>
 
@@ -41,7 +43,7 @@
         <span id='email-success'></span>
     </label><br />
 
-    <label for='password'>Password: <span id="current-password"></span>
+    <label for='password'><span class="setting-label">Password: &nbsp; </span> <span id="current-password"></span>
         <span id="password-mock">**********</span>
 
         <input type='password' id='password' name='password' class='temp-hidden'>
@@ -52,11 +54,14 @@
 
         <span id='password-success'></span>
     </label><br />
+</div>
 
 {% if is_org == 1 %}
-<h4>Organization</h4>
+<div class="settings-section">
+<h3>Organization</h3>
 
-    <label for='org-name' class='org-field'>Organization name: <span id="current-org-name">{{ org_name }}</span> 
+
+    <label for='org-name' class='org-field'><span class="setting-label">Organization name: &nbsp;</span> <span id="current-org-name">{{ org_name }}</span> 
 
         <input type='text' id='org-name' name='org-name' class='temp-hidden'>
 
@@ -67,7 +72,7 @@
         <span id='org-name-success'></span>
     </label><br />
 
-    <label for='ein' class='org-field'>EIN: <span id="current-ein">{{ ein }}</span>
+    <label for='ein' class='org-field'><span class="setting-label">EIN: &nbsp;</span> <span id="current-ein">{{ ein }}</span>
 
         <input type='text' id='ein' name='ein' class="temp-hidden">
 
@@ -78,19 +83,25 @@
         <span id='ein-success'></span>
     </label><br />
 
-    <label for='desc' class='org-field'>Description: <span id="current-desc">{{ desc }}</span>
+    <label for='desc' class='org-field'><span class="setting-label">Description:</span> 
+
+        <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
+
+        <span id='desc-success'></span><br />
+
+        <span id="current-desc">{{ desc }}</span>
 
         <input type='text' id='desc' name='desc' class='temp-hidden'>
 
         <button type="button" id="button-desc" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
 
-        <span id="edit-desc" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
-
-        <span id='desc-success'></span>
     </label><br />
+</div>
 
-<h4>Location</h4>
-<label>Address 
+<div class="settings-section">
+<h3>Location</h3>
+
+<label><span class="setting-label">Address:</span> 
 
 <span id="edit-address" class="glyphicon glyphicon-pencil click-to-edit" aria-hidden="true"></span>
 
@@ -180,7 +191,7 @@
     <br />
 
 <!-- <label for='is-org' class='org-field'> -->
-        <span class='address-field temp-hidden'>Do you want your organization's full address to show in search results?<br /></span>
+        <span class='address-field temp-hidden'><span class="setting-label">Do you want your organization's full address to show in search results?</span><br /></span>
         {% if show_address == 1 %}
         <span id="current-show_address" class="current-address"><i>Your full address <b>is</b> shown on the map.</i></span>
         <input type='radio' class='address-field temp-hidden' name='show_address' value='1' checked='checked'> 
@@ -199,14 +210,13 @@
         <br />
 
     <button type="button" id="button-address" class="click-to-save temp-hidden btn btn-success btn-xs">Save</button>
-
-
 </label>
+</div>
 
+<div class="settings-section">
+<h3>Contacts</h3>
 
-<h4>Contacts</h4>
-
-    <label for='phone' class='org-field'>Organization phone: <span id="current-phone">{{ phone }}</span>
+    <label for='phone' class='org-field'><span class="setting-label">Organization phone: &nbsp; </span> <span id="current-phone">{{ phone }}</span>
 
         <input type='text' id='phone' name='phone' class='temp-hidden'>
 
@@ -217,7 +227,7 @@
         <span id='phone-success'></span>
     </label><br />
 
-    <label for='org-email' class='org-field'>Organization email: <span id="current-org-email">{{ org_email }}</span>
+    <label for='org-email' class='org-field'><span class="setting-label">Organization email: &nbsp; </span> <span id="current-org-email">{{ org_email }}</span>
 
         <input type='text' id='org-email' name='org-email' class='temp-hidden'>
 
@@ -228,7 +238,7 @@
         <span id='org-email-success'></span>
     </label><br />
 
-    <label for='website' class='org-field'>Organization website: <span id="current-website">{{ website }}</span>
+    <label for='website' class='org-field'><span class="setting-label">Organization website: &nbsp; </span> <span id="current-website">{{ website }}</span>
 
         <input type='text' id='website' name='website' class='temp-hidden'>
 
@@ -238,6 +248,7 @@
 
         <span id='website-success'></span>
     </label><br />
+</div>
 
 
     {% endif %}

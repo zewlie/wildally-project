@@ -6,48 +6,36 @@
 {% block sidebar %}
           <ul class="nav nav-sidebar">
 
-            <li><label for='address-entry'>Your location <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+            <li><label for='address-entry'>Location
                 <input type='text' id='address-entry'></label></li>
-
-            <li><label for='search-range'>Search for rehabilitators within
-                <select>
-                    <option value="10">10 miles</option>
-                    <option value="25">25 miles</option>
-                    <option value="50">50 miles</option>
-                    <option value="100" selected="selected">100 miles</option>
-                    <option value="200">200 miles</option>
-                </select>
-              </label></li>
-
-              <li><button type="button" class="btn" id="submit-address">Search</button></li>
 
           </ul>
           <ul class="nav nav-sidebar">
 
-                <li>Show only:</li>
+                <li class="sidebar-note">Show only wildlife rehabilitators that accept:</li>
                 
-                <li><label for='accepting-volunteers'>Rehabilitators accepting volunteers <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='accepting-volunteers'>Volunteers <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='accepting-volunteers' name='accepting-volunteers'></label></li>
 
-                <li><label for='2-accepting-small-mammals'>Rehabilitators accepting small mammals <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='2-accepting-small-mammals'>Small mammals <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='2-accepting-small-mammals' name='2-accepting-small-mammals'></label></li>
 
-                <li><label for='3-accepting-large-mammals'>Rehabilitators accepting large mammals <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='3-accepting-large-mammals'>Large mammals <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='3-accepting-large-mammals' name='3-accepting-large-mammals'></label></li>
 
-                <li><label for='4-accepting-birds'>Rehabilitators accepting birds <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='4-accepting-birds'>Birds <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='4-accepting-birds' name='4-accepting-birds'></label></li>
 
-                <li><label for='8-accepting-reptiles'>Rehabilitators accepting reptiles <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='8-accepting-reptiles'>Reptiles <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='8-accepting-reptiles' name='8-accepting-reptiles'></label></li>
 
-                <li><label for='9-accepting-amphibians'>Rehabilitators accepting amphibians <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
+                <li><label for='9-accepting-amphibians'>Amphibians <span class="glyphicon glyphicon-question-sign" aria-hidden="true">
                 <input type='checkbox' class='map-filter-cb' id='9-accepting-amphibians' name='9-accepting-amphibians'></label></li>
 
           </ul>
 {% endblock %}
 
-  {% block content %} 
+  {% block map %} 
      <div id="main-map"></div>
 
     <!-- The async attribute lets the browser render everything else while the Maps API loads. When the API is ready, it will call the function using 'callback' -->
