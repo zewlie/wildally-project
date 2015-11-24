@@ -3,11 +3,20 @@
 {% block title %}Settings
 {% endblock %}
 
+  {% block navbarloggedin %}
+    <div class="small-navbar navbar-logged-in">
+      <ul class="nav navbar-nav navbar-right">
+          <li><a class="link-active" href="/settings">My Account</a></li>
+          <li><a href="/logout">Logout</a></li>     
+      </ul>
+    </div>
+  {% endblock %}
+
 {% block sidebar %}
 
-        <ul class="nav nav-sidebar">
+        <ul class="nav nav-sidebar my-account">
 
-            <li><a href="/settings">Account Settings</a></li>
+            <li><a class="link-active" href="/settings">Account Settings</a></li>
             <li><a href="/photos">Photos</a></li>
             <li><a href="/analytics">Analytics</a></li>
 

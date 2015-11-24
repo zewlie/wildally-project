@@ -24,6 +24,11 @@ body {
   text-transform: lowercase;
 }
 
+.h2, h2 {
+  color: #DE5237;
+  font-size: 190%;
+}
+
 .h3, h3 {
   color: #DE5237;
   font-size: 150%;
@@ -36,6 +41,10 @@ label {
 .sub-header {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
+}
+
+.main-panel {
+  padding-left: 30px;
 }
 
 
@@ -99,6 +108,11 @@ label {
   display: none;
 }
 
+.nav>li>a:hover {
+  color: #FF785E;
+  background: transparent;
+}
+
 @media (min-width: 768px) {
   .sidebar {
     position: fixed;
@@ -130,16 +144,32 @@ label {
   line-height: 200%;
 }
 
+.nav>li>a {
+  color: #63DBA5 !important;
+  font-family: "Arvo", "serif";
+  text-transform: lowercase;
+  font-size: 120%;
+}
+
+.nav > li > a.link-active {
+  color: #FF785E !important;
+}
+
+.my-account > li:hover {
+  color: #FF785E;
+}
+
 .nav-sidebar > li.sidebar-note {
   line-height: 140%;
   padding-bottom: 10px;
+  color: #FF785E;
 }
 
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
-  color: #fff;
-  background-color: #428bca;
+  color: #FF785E;
+  background: transparent;
 }
 
 /* ========================================== MAIN CONTENT ========================================== */
@@ -287,4 +317,25 @@ span.click-to-edit {
 .btn-success:hover {
   background-color: #4CC28D;
   border-color: #45B583;
+}
+
+.btn-primary {
+  background-color: #FF785E;
+  border-color: #F06F56;
+}
+
+.btn-primary:hover {
+  background-color: #FF8E78;
+  border-color: #F58873;
+}
+
+.btn-group {
+  margin: auto;
+}
+
+
+/* ========================================== FOOTER ========================================== */
+
+footer {
+  height: 200px;
 }

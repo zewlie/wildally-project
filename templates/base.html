@@ -17,19 +17,23 @@
     </div>
 
   {% if session['user_id'] %}
+  {% block navbarloggedin %}
     <div class="small-navbar navbar-logged-in">
       <ul class="nav navbar-nav navbar-right">
           <li><a href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       </ul>
     </div>
+  {% endblock %}
   {% else %}
+  {% block navbarloggedout %}
     <div class="small-navbar navbar-logged-out">
       <ul class="nav navbar-nav navbar-right">
           <li><a href="/new">Register</a><li>
           <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a><li>
       </ul>
     </div>
+  {% endblock %}
   {% endif %}
       </ul>
     </div>
@@ -65,6 +69,7 @@
   <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
+
           {% for message in get_flashed_messages() %}
             <div class="flashed-messages alert alert-success alert-dismissible" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -74,14 +79,21 @@
           {% block sidebar %}
 
           {% endblock %}
+
         </div>
+
   {% block map %}
-        <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-10 col-lg-offset-2 main">
+      <div class="main-panel">
 
   {% block content %} Content {% endblock %}
 
-</div>
+      </div>
+    </div>
+
   {% endblock %}
+
 </div>
 </div>
 
@@ -89,5 +101,7 @@
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 {% block javascript %} Javascript {% endblock %}
 </body>
+
+<footer></footer>
 
 </html>

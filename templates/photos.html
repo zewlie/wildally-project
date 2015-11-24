@@ -3,12 +3,21 @@
 {% block title %}Register for WildAlly
 {% endblock %}
 
+  {% block navbarloggedin %}
+    <div class="small-navbar navbar-logged-in">
+      <ul class="nav navbar-nav navbar-right">
+          <li><a class="link-active" href="/settings">My Account</a></li>
+          <li><a href="/logout">Logout</a></li>     
+      </ul>
+    </div>
+  {% endblock %}
+
 {% block sidebar %}
 
-        <ul class="nav nav-sidebar">
+        <ul class="nav nav-sidebar my-account">
 
             <li><a href="/settings">Account Settings</a></li>
-            <li><a href="/photos">Photos</a></li>
+            <li><a class="link-active" href="/photos">Photos</a></li>
             <li><a href="/analytics">Analytics</a></li>
 
         </ul>
@@ -23,7 +32,7 @@
   {% else %}
 
 {% if filenames %}
-<h3>Your Photos</h3>
+<h3>Photos You've Uploaded:</h3>
 {% for filename in filenames %}
 <div id='thumb-{{ loop.index }}' class='thumbnail' style='background-image: url({{ root }}{{ filename }});'>
   <div id='remove-container-{{ loop.index }}' class='remove-photo-container'>
@@ -31,8 +40,8 @@
   </div>
 </div>
 {% endfor %}
-<h3>Carousel Preview</h3>
-<p><i>This will display when your organization's map marker is clicked.</i></p>
+
+<p><i><b>Carousel preview:</b> this will display when your organization's map marker is clicked.</i></p>
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="2000">
   <!-- Indicators -->
   <ol class="carousel-indicators">
