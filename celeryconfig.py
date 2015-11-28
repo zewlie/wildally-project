@@ -10,7 +10,7 @@ CELERY_IMPORTS=("tasks")
  
 CELERYBEAT_SCHEDULE = {
     'every-minute': {
-        'task': 'tasks.test_task',
+        'task': 'tasks.update_analytics_task',
         'schedule': timedelta(minutes=15),
     },
 }

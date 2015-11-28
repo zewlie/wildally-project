@@ -22,7 +22,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(500), nullable=False)
     account_made = db.Column(db.DateTime, nullable=False)
     last_login = db.Column(db.DateTime)
@@ -421,19 +421,32 @@ class ClickFilter(db.Model):
 ##############################################################################
 # Helper functions
 
-def connect_to_db(app):
+def connect_to_db(app, db_uri="sqlite:///wildally.db"):
     """Connect the database to our Flask app."""
 
     # Configure to use our SQLite database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wildally.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     db.app = app
     db.init_app(app)
 
 def sample_data():
     """Generates sample data for testing."""
-    c1 = Click(id=1, type_id=1, org_id=5)
-    cf1 = ClickFilter(id=1, click_id=1, filter_id="")
-    db.session.add_all([c1, cf1])
+
+    # c1 = Click(id=1, type_id=1, org_id=5, time=datetime.now())
+    # cf1 = ClickFilter(id=1, click_id=1, filter_id="volunteer")
+
+    u1 = User(email='email@email.com', 
+            username='TestUser123', 
+            password='password', 
+            account_made=datetime.now())
+
+    o1 = Org(user_id=1,
+            name='Test Org',
+            show_address=False,
+            city='Portland',
+            state='OR')
+
+    db.session.add_all([u1, o1])
     db.session.commit()
 
 if __name__ == "__main__":

@@ -1,10 +1,11 @@
 import json
 from unittest import TestCase
-from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, Click, ClickFilter, db
+from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, Click, ClickFilter, connect_to_db, db, sample_data
 from server import app
+from datetime import datetime
 import flask
 import server
-
+import tasks
 
 class WildAllyUnitTestCase(TestCase):
     """Discrete code testing."""
@@ -22,14 +23,6 @@ class WildAllyUnitTestCase(TestCase):
 class MockFlaskTests(TestCase):
     """Flask tests that require mocking."""
 
-    def _mock_connect_to_db(app):
-        """Connect the database to our Flask app."""
-
-        # Configure to use our SQLite database
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mock/wildally-mock.db'
-        self.client = app
-        db.init_app(self.client)
-
 
     def setUp(self):
         """Stuff to do before every test."""
@@ -39,8 +32,13 @@ class MockFlaskTests(TestCase):
 
         # Mock session
 
-        # Connect to mock database
-        _mock_connect_to_db(app)
+        # Connect to temporary database
+        connect_to_db(app, "sqlite:///")
+
+        # Create tables and add sample data
+        db.create_all()
+        sample_data()
+
 
         def _mock_grab_image_dimensions(filename):
             return (920, 764)
@@ -70,9 +68,28 @@ class MockFlaskTests(TestCase):
         self.assertEqual(server.crop_and_generate_thumb("baby-chipmunk.jpg"), (23, 0, 897, 764))
 
 
+    def test_gather_clicks(self):
+
+        self.assertEqual(server.gather_clicks(5, ["volunteer"]), (1, "volunteer"))
 
 
+    def test_load_click_info_from_db(self):
 
+        self.assertEqual(len(server.load_click_info_from_db()), 4)
+        self.assertEqual(server.load_click_info_from_db()[2][0].id, 1)
+        self.assertEqual(server.load_click_info_from_db()[3][0].id, 1)
+
+
+    def test_update_analytics(self):
+
+        self.assertNotEqual(server.update_analytics()['day'], {})
+        self.assertNotEqual(server.update_analytics()['day']['hour1'], [])
+        self.assertNotEqual(server.update_analytics()['week'], {})
+        self.assertNotEqual(server.update_analytics()['week']['day1'], [])
+        self.assertNotEqual(server.update_analytics()['month'], {})
+        self.assertNotEqual(server.update_analytics()['month']['week1'], [])
+        self.assertIsNotNone(server.update_analytics()['filters'])
+        self.assertIsNotNone(server.update_analytics()['allfilters'])
 
 
         # with self.client as cli:
