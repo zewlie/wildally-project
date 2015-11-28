@@ -151,10 +151,10 @@ console.log(animalTypes);
 
           if (org.address1) {
               if (org.address2 && org.show_address == 1) {
-                  printAddress = org.address1 + '<br />' + org.address2;
+                  printAddress = '<p>' + org.address1 + '</p><p>' + org.address2 + '</p>';
               } else if (org.show_address == 1) {
-                  printAddress = org.address1 + '<br />'; }
-          } else { printAddress = 'This is an approximate location. Please call for directions. <br /><br />'; }
+                  printAddress = '<p>' + org.address1 + '</p>'; }
+          } else { printAddress = '<p>This is an approximate location. Please call for directions.</p>'; }
 
           if (org.animals.length == 5) {
               orgAnimals = '<li>all wildlife</li>';
@@ -169,16 +169,16 @@ console.log(animalTypes);
               '<div class="window-content ' + windowClass + '">' +
                   orgPhoto +
               '<div class="window-right">' +
-                  '<h3>' + org.orgName + '</h3>' +
-                  '<a href="tel:' + org.phone + '">' + 
+                  '<span class="infowindow-org-name">' + org.orgName + '</span>' +
+                  '<a href="tel:' + org.phone + '">' +
                   '<h4 class="' + org.phone + '"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> &nbsp;' +
                   org.phone + '</h4></a>' +
-                  '<p>' + printAddress +
-                        org.city + ', ' +
+                        printAddress +
+                        '<p>' + org.city + ', ' +
                         org.state + ' ' +
                         org.zipcode +
                   '</p>' + '<p>' + org.desc + '</p>' +
-                  '<h5>Animals accepted</h5><ul>' + orgAnimals + '</ul>' +
+                  '<span class="infowindow-animals-accepted">Animals accepted:</span><ul>' + orgAnimals + '</ul>' +
               '</div>' +
               '</div>');
 
@@ -234,6 +234,7 @@ console.log(animalTypes);
     userCoords = place.geometry.location;
     map.panTo(userCoords);
     dropUserMarker(userCoords);
+    console.log($('#address-entry').val());
   }
 }
 

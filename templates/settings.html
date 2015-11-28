@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Settings
+{% block title %}Manage Settings
 {% endblock %}
 
   {% block navbarloggedin %}
     <div class="small-navbar navbar-logged-in">
       <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Map</a></li>
           <li><a class="link-active" href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       </ul>
@@ -16,9 +17,9 @@
 
         <ul class="nav nav-sidebar my-account">
 
-            <li><a class="link-active" href="/settings">Account Settings</a></li>
-            <li><a href="/photos">Photos</a></li>
-            <li><a href="/analytics">Analytics</a></li>
+            <li><a class="link-active" href="/settings"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span> &nbsp; Settings</a></li>
+            <li><a href="/photos"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> &nbsp; Photos</a></li>
+            <li><a href="/analytics"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> &nbsp; Analytics</a></li>
 
         </ul>
 

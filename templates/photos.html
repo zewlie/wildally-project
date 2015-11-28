@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Register for WildAlly
+{% block title %}Manage Photos
 {% endblock %}
 
   {% block navbarloggedin %}
     <div class="small-navbar navbar-logged-in">
       <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Map</a></li>
           <li><a class="link-active" href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       </ul>
@@ -16,9 +17,9 @@
 
         <ul class="nav nav-sidebar my-account">
 
-            <li><a href="/settings">Account Settings</a></li>
-            <li><a class="link-active" href="/photos">Photos</a></li>
-            <li><a href="/analytics">Analytics</a></li>
+            <li><a href="/settings"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span> &nbsp; Settings</a></li>
+            <li><a class="link-active" href="/photos"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> &nbsp; Photos</a></li>
+            <li><a href="/analytics"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> &nbsp; Analytics</a></li>
 
         </ul>
 
@@ -73,17 +74,31 @@
     <span class="sr-only">Next</span>
   </a>
 </div>
+<br />
 {% endif %}
 
-<p>Upload a photo!</p>
+<h4>Upload <span id='photo-filename-placeholder' style='display:none;'>a photo!</span><span id='photo-filename-span' style='color:#42A679; display:none;'></span></h4>
 <form action="/_upload-photo" method="POST" id="photo-form" enctype="multipart/form-data">
-  <label class="btn btn-primary" for="photo">
-      <input type="file" class="photo-file-input" name="photo" id="photo" style="display: none;">
+  <div class="inline-block"><label class="btn btn-primary" for="photo">
+      <input type="file" class="photo-file-input" name="photo" id="photo" style="display:none;">
       Select Photo
   </label>
-      <!-- <button type="button" id="upload-photo" class="btn btn-success btn-xs">Upload Photo</button> -->
-      <br /><input type="submit" value="Upload Photo" class="btn btn-success">
+  </div>
+  <div class="inline-block">
+      <input type="submit" value="Upload Photo" id="submit-photo" class="btn btn-success">
+  </div>
 </form>
 
 {% endif %}
   {% endblock %}
+
+{% block javascript %}
+<script>
+
+$(document).ready(function() {
+    console.log( "ready!" );
+    $("#photo-filename-placeholder").fadeIn(500);
+});
+
+</script>
+{% endblock %}

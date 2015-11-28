@@ -11,15 +11,13 @@
 
     <nav class="navbar navbar-transparent navbar-fixed-top">
       <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">WildAlly
-      </a>
-    </div>
+    
 
   {% if session['user_id'] %}
   {% block navbarloggedin %}
     <div class="small-navbar navbar-logged-in">
       <ul class="nav navbar-nav navbar-right">
+          <li><a class="link-active" href="/">Map</a></li>
           <li><a href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       </ul>
@@ -29,6 +27,7 @@
   {% block navbarloggedout %}
     <div class="small-navbar navbar-logged-out">
       <ul class="nav navbar-nav navbar-right">
+          <li><a class="link-active" href="/">Map</a></li>
           <li><a href="/new">Register</a><li>
           <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a><li>
       </ul>
@@ -69,6 +68,11 @@
   <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
+
+          <div class="logo-container">
+            <a href="/"><div class="navbar-brand" href="/">WildAlly</div></a>
+          </div>
+
 
           {% for message in get_flashed_messages() %}
             <div class="flashed-messages alert alert-success alert-dismissible" role="alert">

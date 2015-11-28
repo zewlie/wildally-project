@@ -429,6 +429,12 @@ def connect_to_db(app):
     db.app = app
     db.init_app(app)
 
+def sample_data():
+    """Generates sample data for testing."""
+    c1 = Click(id=1, type_id=1, org_id=5)
+    cf1 = ClickFilter(id=1, click_id=1, filter_id="")
+    db.session.add_all([c1, cf1])
+    db.session.commit()
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave

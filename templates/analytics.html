@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Register for WildAlly
+{% block title %}Analytics
 {% endblock %}
 
   {% block navbarloggedin %}
     <div class="small-navbar navbar-logged-in">
       <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Map</a></li>
           <li><a class="link-active" href="/settings">My Account</a></li>
           <li><a href="/logout">Logout</a></li>     
       </ul>
@@ -16,9 +17,9 @@
 
         <ul class="nav nav-sidebar my-account">
 
-            <li><a href="/settings">Account Settings</a></li>
-            <li><a href="/photos">Photos</a></li>
-            <li><a class="link-active" href="/analytics">Analytics</a></li>
+            <li><a href="/settings"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span> &nbsp; Settings</a></li>
+            <li><a href="/photos"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> &nbsp; Photos</a></li>
+            <li><a class="link-active" href="/analytics"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> &nbsp; Analytics</a></li>
 
         </ul>
 
@@ -31,26 +32,48 @@
   {% else %}
 
   
-    <h2>Your Marker's Analytics</h2>
-    <h4>Check out your marker's recent clicks:</h4>
-    <div id='chart-toolbar' class="btn-toolbar" role="toolbar" aria-label="View Charts">
+    <h3>Your Marker: <span id='analytics-header' style='display:none;'>Today's Clicks</span></h3>
+    <div id='chart-toolbar' class="btn-toolbar" role="toolbar">
       <div class="btn-group" role="group" aria-label="View Charts">
-        <button id="show-day" type="button" class="show-chart btn btn-default btn-success">View Today's Clicks</button>
-        <button id="show-week" type="button" class="show-chart btn btn-default">View This Week's Clicks</button>
-        <button id="show-month" type="button" class="show-chart btn btn-default">View This Month's Clicks</button>
+        <button id="show-day" type="button" class="show-chart btn btn-default btn-success">Today</button>
+        <button id="show-week" type="button" class="show-chart btn btn-default">This Week</button>
+        <button id="show-month" type="button" class="show-chart btn btn-default">This Month</button>
       </div>
     </div>
+
+    <div id='chart-options-toolbar' class="btn-toolbar" role="toolbar">
+      <div class="btn-group" role="group" aria-label="View Charts">
+        <button id="show-line" type="button" class="show-chart-option btn btn-default btn-success">Clicks Over Time</button>
+        <button id="show-pie" type="button" class="show-chart-option btn btn-default">Filter Comparison</button>
+      </div>
+    </div>
+
+    <div class="col-sm-9 col-md-10">
+
     <div id='line-chart-container'>
-        <canvas id="line-chart" width="750" height="380"></canvas>
+        <div style="padding-right: 300px;"><canvas id="line-chart"></canvas></div>
     </div>
 
-    <h4>What are users filtering for?</h4>
+    <div id='pie-chart-container' style='display:none;'>
+    <h5>Which filters are users selecting in order to find you?</h5>
 
-    <div id='pie-chart-container'>
-        <canvas id="filters-pie" width="190" height="190"></canvas>
-        <canvas id="all-filters-pie" width="190" height="190"></canvas>
+        <div class="col-sm-6 col-md-4">
+          <center><h4>Your marker</h4></center>
+
+            <div id='filters-pie-chart-container'>
+              <canvas id="filters-pie" width="190" height="190"></canvas>
+            </div>
+      </div>
+      <div class="col-sm-6 col-md-4 col-md-offset-1">
+        <center><h4>All markers</h4></center>
+
+            <div id='all-filters-pie-chart-container'>
+              <canvas id="all-filters-pie" width="190" height="190"></canvas>
+            </div>
+      </div>
     </div>
 
+  </div>
 
   {% endif %}
 {% endblock %}
@@ -66,7 +89,7 @@
     var filtersPieElement = document.getElementById('filters-pie');
     var allFiltersPieElement = document.getElementById('all-filters-pie');
 
-    var lineChart, pieChart;
+    var lineChart, filtersPieChart, allFiltersPieChart;
 
     var monthChartLabels = [];
     var monthChartData = [];
@@ -87,6 +110,11 @@
 
 
     processChart();
+
+  $(document).ready(function() {
+    console.log( "ready!" );
+    $("#analytics-header").fadeIn(500);
+});
 
 </script>
 {% endblock %}

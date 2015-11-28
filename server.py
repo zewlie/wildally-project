@@ -17,6 +17,8 @@ from werkzeug import secure_filename
 
 from model import User, Org, Pickup, Hour, OrgAnimal, Animal, ContactType, Phone, Email, SiteType, Site, Click, ClickFilter, connect_to_db, db
 
+import unittest
+
 # Photo upload settings
 UPLOAD_FOLDER = './static/user/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'txt'])
@@ -111,7 +113,7 @@ def logout():
     """Logout and redirect to homepage."""
 
     session['user_id'] = None
-    flash("Successfully logged out!")
+    flash("Logged out!")
 
     return redirect('/')
 
@@ -405,7 +407,17 @@ def analytics_json():
 #################################################################################
 
 def account_setting_type(attribute):
-    """Determines the type of user/org attribute being updated from the Settings page."""
+    """Determines the type of user/org attribute being updated from the Settings page.
+
+        >>> account_setting_type("address")
+        'address'
+
+        >>> account_setting_type("email")
+        'user'
+
+        >>> account_setting_type("org-email")
+        'org'
+"""
 
     attributes = {'user': ['username',
                         'email',
@@ -458,6 +470,9 @@ def crop_and_generate_thumb(filename):
     
     thumb = generate_thumb(filename, crop_thumb)
 
+    print crop_thumb
+    return crop_thumb
+
 
 def generate_thumb(filename, dimensions_tuple):
     """Generates a thumbnail from an uploaded image."""
@@ -482,6 +497,7 @@ def grab_image_dimensions(filename):
     loaded_image = Image.open(app.config['UPLOAD_FOLDER'] + 'img/' + str(session['user_id']) + '/' + filename)
     loaded_image.load()
 
+    print loaded_image.size
     return loaded_image.size
 
 
@@ -495,6 +511,9 @@ def allowed_file(filename):
 def gather_clicks(org_id, current_filters):
     """Adds a new click and its associated filters to the database."""
 
+    # if session['user_id'] == org_id:
+    #     return None
+
     click = Click(type_id="1",
                 org_id=org_id,
                 time=datetime.now())
@@ -507,10 +526,12 @@ def gather_clicks(org_id, current_filters):
             click_filter = ClickFilter(click_id=click.id,
                                        filter_id=each)
             db.session.add(click_filter)
+            db.session.flush()
 
     db.session.commit()
 
-    return None
+    print click_filter.id
+    return click_filter.id
 
 
 def load_click_info_from_db():

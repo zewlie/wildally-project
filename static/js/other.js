@@ -183,10 +183,6 @@ function processChart() {
     });
 
     setTimeout(function(){ generateLineChart(lineChartElement, dayChartLabels, dayChartData);
-                            console.log(monthChartLabels);
-                            console.log(monthChartData);
-                           generatePieChart(filtersPieElement, dayFiltersArrays);
-                           generatePieChart(allFiltersPieElement, dayAllFiltersArrays);
                         }, 500);
 }
 
@@ -212,7 +208,7 @@ function generateLineChart(element, labelArray, dataArray) {
 }
 
 
-function generatePieChart(element, labelDataArrays) {
+function generatePieChart(pieType, element, labelDataArrays) {
 
     var pieColors = { "1": ["#9C9C9C", "#C9C9C9"],
                       "2": ["#EAAB59", "#F2CD9D"],
@@ -244,23 +240,79 @@ function generatePieChart(element, labelDataArrays) {
         }
 
     var ctx = element.getContext("2d");
-    pieChart = new Chart(ctx).Pie(data, {animateScale: true});
+    if (pieType == "filters") {
+        filtersPieChart = new Chart(ctx).Pie(data, {animateScale: false});
+    }
+    else if (pieType == "allFilters") {
+        allFiltersPieChart = new Chart(ctx).Pie(data, {animateScale: false});
+    }
 }
 
 
 function showChart(evt) {
+    if (lineChart) {
     lineChart.destroy();
-    pieChart.destroy();
+    }
+    if (filtersPieChart) {
+    filtersPieChart.destroy();
+    allFiltersPieChart.destroy();
+    }
 
     var buttonId = "#" + this.id;
-    var chartId = this.id.replace('show-','');
+    var chartId = this.id.replace('show-', '');
+    var chartType = $('.show-chart-option.btn.btn-default.btn-success').attr('id').replace('show-', '');
+    console.log(chartType);
 
     $('.show-chart').removeClass('btn-success');
     $(buttonId).addClass('btn-success');
 
-    generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
-    generatePieChart(filtersPieElement, window[chartId + "FiltersArrays"]);
-    generatePieChart(allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
+        if (chartType == 'line') {
+        $('#pie-chart-container').css('display', 'none');
+        $('#line-chart-container').css('display', 'block');
+        generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
+    }
+    else if (chartType == 'pie') {
+        $('#line-chart-container').css('display', 'none');
+        $('#pie-chart-container').css('display', 'block');
+        setTimeout(function(){
+                generatePieChart("filters", filtersPieElement, window[chartId + "FiltersArrays"]);
+                generatePieChart("allFilters", allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
+            }, 100);
+    }
+}
+
+function showChartOption(evt) {
+    if (lineChart) {
+    lineChart.destroy();
+    }
+    if (filtersPieChart) {
+    filtersPieChart.destroy();
+    allFiltersPieChart.destroy();
+    }
+
+    var buttonId = "#" + this.id;
+    var chartId = $('.show-chart.btn.btn-default.btn-success').attr('id').replace('show-', '');
+    var chartType = this.id.replace('show-', '');
+    console.log(chartId);
+
+    $('.show-chart-option').removeClass('btn-success');
+    $(buttonId).addClass('btn-success');
+
+    if (chartType == 'line') {
+        $('#pie-chart-container').css('display', 'none');
+        $('#line-chart-container').css('display', 'block');
+        generateLineChart(lineChartElement, window[chartId + "ChartLabels"], window[chartId + "ChartData"]);
+    }
+    else if (chartType == 'pie') {
+        console.log(window[chartId + "FiltersArrays"]);
+        console.log(filtersPieElement);
+        $('#line-chart-container').css('display', 'none');
+        $('#pie-chart-container').css('display', 'block');
+        setTimeout(function(){
+                generatePieChart("filters", filtersPieElement, window[chartId + "FiltersArrays"]);
+                generatePieChart("allFilters", allFiltersPieElement, window[chartId + "AllFiltersArrays"]);
+            }, 100);
+    }
 }
 
 
@@ -292,6 +344,17 @@ function removePhoto(evt) {
       });
 }
 
+function displayUploadFilename(evt) {
+    var uploadFilename = $('input[type=file]').val().split('\\').pop();
+    $("#photo-filename-span").fadeOut(500);
+    $("#photo-filename-placeholder").fadeOut(500);
+
+    setTimeout(function(){
+        $('#photo-filename-span').empty().append(uploadFilename);
+        $("#photo-filename-span").fadeIn(500);
+    },500);
+}
+
 
 // ==================== EVENT HANDLERS ====================
 
@@ -299,5 +362,6 @@ $('.click-to-edit').on("click", toggleSettingsField);
 $('.click-to-save').on("click", saveOneField);
 $('.remove-photo').on("click", removePhoto);
 $('.show-chart').on("click", showChart);
+$('.show-chart-option').on("click", showChartOption);
 $('#org-checkbox').on("change", toggleOrgFields);
-
+$('#photo').on("change", displayUploadFilename);
