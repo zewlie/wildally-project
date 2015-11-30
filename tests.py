@@ -20,6 +20,21 @@ class WildAllyUnitTestCase(TestCase):
         self.assertEqual(server.allowed_file("image.pdf"), False)
 
 
+class FlaskRouteTests(TestCase):
+    """Flask tests for routes."""
+
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        # Get the Flask test client
+        self.client = app.test_client()
+
+    def test_create_account_invalid_JSON(self):
+        """Test status code 405 from improper JSON on post to raw"""
+        response = self.client.post('/user-added', data="not json", content_type='application/json')
+        self.assertEqual(response.status_code, 500)
+
+
 class MockFlaskTests(TestCase):
     """Flask tests that require mocking."""
 
@@ -73,6 +88,7 @@ class MockFlaskTests(TestCase):
         self.assertEqual(server.gather_clicks(5, ["volunteer"]), (1, "volunteer"))
 
 
+
     def test_load_click_info_from_db(self):
 
         self.assertEqual(len(server.load_click_info_from_db()), 4)
@@ -91,6 +107,32 @@ class MockFlaskTests(TestCase):
         self.assertIsNotNone(server.update_analytics()['filters'])
         self.assertIsNotNone(server.update_analytics()['allfilters'])
 
+    def test_create_account(self):
+
+        response = self.client.post('/user-added', data=dict(
+                                    username='TestOrg',
+                                    website='testorg.com', 
+                                    is_org='yes',
+                                    address1='425 N 5th St',
+                                    address2='Suite 1',
+                                    phone='555-555-5555',
+                                    password='password',
+                                    desc='desc',
+                                    city='Phoenix',
+                                    show_address='0',
+                                    zipcode='85004',
+                                    org_email='testorg@testorg.com',
+                                    state='AZ',
+                                    email='testorg@gmail.com',
+                                    org_name='Test Org',
+                                    ein='123456789'
+                                    ), follow_redirects=True)
+
+        self.assertIn('Test Org', response.data)
+        self.assertIn('testorg@testorg.com', response.data)
+        self.assertIn('425 N 5th St', response.data)
+        self.assertIn('85004', response.data)
+        self.assertEqual(response.status_code, 200)
 
         # with self.client as cli:
         #     assert flask.session['user_id'] == 5

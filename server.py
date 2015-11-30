@@ -129,6 +129,8 @@ def create_user():
 def user_added():
     """New account form submission."""
 
+    print request.form.get
+
     # Basic user fields:
     username = request.form.get("username")
     email = request.form.get("email")
@@ -149,15 +151,15 @@ def user_added():
     flash("Welcome to WildAlly, {}!".format(username))
 
     # Check if the user is affiliated with an org:
-    is_org = request.form.get("is-org")
+    is_org = request.form.get("is_org")
 
     # If so, insert data into orgs and pickups:
     if is_org == 'yes':
 
         # Wildlife rehabilitator org fields:
-        name = request.form.get("org-name")
+        name = request.form.get("org_name")
         ein = request.form.get("ein")
-        show_address = request.form.get("show-address")
+        show_address = request.form.get("show_address")
         address1 = request.form.get("address1")
         address2 = request.form.get("address2")
         city = request.form.get("city")
@@ -165,7 +167,7 @@ def user_added():
         zipcode = request.form.get("zipcode")
         desc = request.form.get("desc")
         phone = request.form.get("phone")
-        org_email = request.form.get("org-email")
+        org_email = request.form.get("org_email")
         website = request.form.get("website")
 
         org = Org(user_id=user.id,
@@ -186,12 +188,14 @@ def user_added():
         db.session.flush()
 
         # Create geocode and insert coordinates into pickups:
+        org = Org.query.get(org.id)
+
         if show_address == '1':
             address = [address1, address2, city, state, zipcode]
         else:
             address = [city, state, zipcode]
 
-        coords = Org.make_geocode()
+        coords = org.make_geocode()
 
         pickup = Pickup(org_id=org.id,
                         latitude=coords[0],
