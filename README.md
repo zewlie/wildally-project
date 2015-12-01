@@ -17,6 +17,15 @@ WildAlly connects wildlife rehabilitators to nearby users seeking volunteer expe
 * Passlib     * Bootstrap
 ============  ==============
 
+| ------------- | ------------- |
+| * Celery      | * pygeocoder  |
+| * Redis       | * Pillow      |
+| * SQLite      | * Jinja       |
+| * SQLAlchemy  | * Javascript  |
+| * Python      | * JQuery      |
+| * Flask       | * Chart.js    |
+| * Passlib     | * Bootstrap   |
+
 
 ### Find a Wildlife Rehabilitator
 
