@@ -29,7 +29,7 @@ Information about the click (current time, filters selected) is saved to the dat
 *Note: The map is populated by querying the database for wildlife rehabilitator organization information and animal types.
 Because these are represented by two tables with a many-to-many relationship through an intermediary table, animal types can be modified, added, or deleted without altering the code.*
 
-[WildAlly Demo](README/demo_index.gif)
+![WildAlly Demo](README/demo_index.gif)
 
 
 ### Wildlife Rehabilitator Tools
@@ -44,14 +44,14 @@ The map will automatically create a new marker and info window for each new acco
 
 Wildlife rehabilitators can update individual settings quickly and intuitively with AJAX. A single event handler manages all of the settings. If the address is updated, all of the address fields will be bundled together and updated synchronously; this allows the app to automatically and accurately generate a new geocode for the marker's updated location.
 
-[WildAlly Demo](README/demo_settings.gif)
+![WildAlly Demo](README/demo_settings.gif)
 
 
 #### Photos
 
 Wildlife rehabilitators can upload photos to be displayed alongside their information on the map. To maintain uniform dimensions (dictated by global variables in server.py), each photo will automatically be cropped. The app analyzes the dimensions of the original image, determines the coordinates to crop from, and uses Pillow to generate the new image. It then performs a check for the user's image filepath, and creates one if it doesn't yet exist. Finally, the image is saved.
 
-[WildAlly Demo](README/demo_photos.gif)
+![WildAlly Demo](README/demo_photos.gif)
 
 
 #### Analytics
@@ -63,4 +63,4 @@ They can also view a breakdown of the filters selected when the marker was click
 WildAlly uses Celery with Redis to automatically generate text files containing the JSON utilized to generate the charts.
 Every 15 minutes, an independent Celery worker process updates each of these files with click information recently stored to the database.
 
-[WildAlly Demo](README/demo_analytics.gif)
+![WildAlly Demo](README/demo_analytics.gif)
